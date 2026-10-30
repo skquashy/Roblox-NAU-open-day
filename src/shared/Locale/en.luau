@@ -1,0 +1,122 @@
+--!strict
+-- English. Faculty names are literal translations of the official Ukrainian names:
+-- replace them with the official English names when KAI confirms them.
+
+return {
+	-- General interface
+	["ui.close"] = "Close",
+	["ui.language"] = "Language",
+
+	-- Monument
+	["shop.grocery"] = "Groceries",
+	["shop.coffee"] = "Coffee shop",
+	["shop.pharmacy"] = "Pharmacy",
+	["shop.books"] = "Bookshop",
+	["shop.pizza"] = "Pizza",
+	["shop.flowers"] = "Flowers",
+	["tram.stop"] = "Tram",
+	["tram.sign"] = "T",
+	["shop.fora"] = "фора",
+	["shop.brand.silpo"] = "Silpo",
+	["shop.brand.atb"] = "ATB",
+	["shop.brand.novus"] = "Novus",
+	["shop.brand.aroma"] = "Aroma Kava",
+	["shop.brand.lvivcroissants"] = "Lviv Croissants",
+	["shop.brand.podorozhnyk"] = "Podorozhnyk",
+	["shop.brand.apteka911"] = "Pharmacy 911",
+	["shop.brand.yeknyharnia"] = "Ye Bookstore",
+	["shop.brand.starylev"] = "Old Lion",
+	["shop.brand.veterano"] = "Veterano Pizza",
+	["shop.brand.celentano"] = "Celentano",
+	["shop.brand.flowers"] = "Flowers",
+	["shop.brand.roshen"] = "Roshen",
+	["shop.brand.novaposhta"] = "Nova Poshta",
+	["shop.entrance"] = "Entrance",
+	["shop.kulynychi.name"] = "Kulynychi",
+	["monument.plaque"] = "KAI · 1933",
+
+	-- Buildings
+	["building.name"] = "Building {1}",
+	["building.floor"] = "Floor {1}",
+
+	-- Faculties
+	["fac.akf.name"] = "Aerospace Faculty",
+	["fac.gmf.name"] = "Faculty of Humanities and Arts",
+	["fac.faet.name"] = "Faculty of Air Navigation, Electronics and Telecommunications",
+	["fac.fabd.name"] = "Faculty of Architecture, Construction and Design",
+	["fac.fknt.name"] = "Faculty of Computer Science and Technologies",
+	["fac.fmfm.name"] = "Faculty of Management, Finance and Marketing",
+	["fac.fnz.name"] = "Faculty of Health Sciences",
+	["fac.fpmv.name"] = "Faculty of Law and International Relations",
+	["fac.ftl.name"] = "Faculty of Transport and Logistics",
+	["fac.akf.abbr"] = "AKF",
+	["fac.gmf.abbr"] = "GMF",
+	["fac.faet.abbr"] = "FAET",
+	["fac.fabd.abbr"] = "FABD",
+	["fac.fknt.abbr"] = "FKNT",
+	["fac.fmfm.abbr"] = "FMFM",
+	["fac.fnz.abbr"] = "FNZ",
+	["fac.fpmv.abbr"] = "FPMV",
+	["fac.ftl.abbr"] = "FTL",
+
+	-- Notifications
+	["toast.explored"] = "Explored: {1}",
+	["toast.levelup"] = "Level up: {1}!",
+	["toast.quest_done"] = "Quest complete: {1}",
+	["toast.badge"] = "New badge: {1}",
+	["toast.item"] = "Received: {1}",
+	["toast.bought"] = "Purchased: {1}",
+	["toast.no_coins"] = "Not enough coins",
+	["toast.have_item"] = "You already have this item",
+
+	-- Looks
+	["arch.pilot"] = "Pilot",
+	["arch.engineer"] = "Engineer",
+	["arch.scientist"] = "Scientist",
+	["arch.designer"] = "Designer",
+	["arch.programmer"] = "Programmer",
+	["arch.business"] = "Business / teacher",
+
+	-- Quests
+	["quest.first_steps"] = "First steps: explore your first faculty",
+	["quest.play_akf"] = "Complete the AKF faculty minigame",
+	["quest.play_gmf"] = "Complete the GMF faculty minigame",
+	["quest.play_faet"] = "Complete the FAET faculty minigame",
+	["quest.play_fabd"] = "Complete the FABD faculty minigame",
+	["quest.play_fknt"] = "Complete the FKNT faculty minigame",
+	["quest.play_fmfm"] = "Complete the FMFM faculty minigame",
+	["quest.play_fnz"] = "Complete the FNZ faculty minigame",
+	["quest.play_fpmv"] = "Complete the FPMV faculty minigame",
+	["quest.play_ftl"] = "Complete the FTL faculty minigame",
+	["quest.play_three"] = "Complete three different minigames",
+	["quest.explore_all"] = "Explore all faculties",
+	["quest.graduate"] = "Finish the ceremony and get your student card",
+
+	-- Badges
+	["badge.first_steps.name"] = "First steps",
+	["badge.first_steps.desc"] = "You explored your first faculty.",
+	["badge.explorer.name"] = "Campus explorer",
+	["badge.explorer.desc"] = "You explored every faculty.",
+	["badge.level_5.name"] = "Level five",
+	["badge.level_5.desc"] = "You reached level 5.",
+	["badge.graduate.name"] = "Future student",
+	["badge.graduate.desc"] = "You finished the ceremony and got your student card.",
+	["badge.faculty.desc"] = "You completed the faculty minigame.",
+	["badge.faculty_akf.name"] = "Aerospace",
+	["badge.faculty_gmf.name"] = "Humanities and Arts",
+	["badge.faculty_faet.name"] = "Air Navigation",
+	["badge.faculty_fabd.name"] = "Architecture and Design",
+	["badge.faculty_fknt.name"] = "Computer Science",
+	["badge.faculty_fmfm.name"] = "Management and Marketing",
+	["badge.faculty_fnz.name"] = "Health Sciences",
+	["badge.faculty_fpmv.name"] = "Law and International Relations",
+	["badge.faculty_ftl.name"] = "Transport and Logistics",
+
+	-- Items
+	["item.helmet"] = "Pilot helmet",
+	["item.jacket"] = "Student jacket",
+	["item.hat_blue"] = "Blue cap",
+	["item.hat_gold"] = "Golden crown",
+	["item.hat_green"] = "Green hat",
+	["item.hat_red"] = "Red beret",
+}

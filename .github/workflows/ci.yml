@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install toolchain
+        uses: CompeyDev/setup-rokit@v0.1.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lint
+        run: selene src
+
+      # Форматирование не блокирует CI: один раз выполните `stylua src` локально,
+      # закоммитьте результат и уберите continue-on-error.
+      - name: Check formatting
+        run: stylua --check src
+        continue-on-error: true

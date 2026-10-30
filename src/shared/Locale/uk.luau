@@ -1,0 +1,122 @@
+--!strict
+-- Українська (основна мова гри). Назви факультетів - за списком приймальної комісії КАІ.
+-- Описи факультетів (fac.<id>.info) додаються тільки з офіційних матеріалів факультетів.
+
+return {
+	-- Загальний інтерфейс
+	["ui.close"] = "Закрити",
+	["ui.language"] = "Мова",
+
+	-- Пам’ятник
+	["shop.grocery"] = "Продукти",
+	["shop.coffee"] = "Кав’ярня",
+	["shop.pharmacy"] = "Аптека",
+	["shop.books"] = "Книгарня",
+	["shop.pizza"] = "Піца",
+	["shop.flowers"] = "Квіти",
+	["tram.stop"] = "Трамвай",
+	["tram.sign"] = "Т",
+	["shop.fora"] = "фора",
+	["shop.brand.silpo"] = "Сільпо",
+	["shop.brand.atb"] = "АТБ",
+	["shop.brand.novus"] = "Novus",
+	["shop.brand.aroma"] = "Aroma Kava",
+	["shop.brand.lvivcroissants"] = "Lviv Croissants",
+	["shop.brand.podorozhnyk"] = "Подорожник",
+	["shop.brand.apteka911"] = "Аптека 911",
+	["shop.brand.yeknyharnia"] = "Книгарня Є",
+	["shop.brand.starylev"] = "Старий Лев",
+	["shop.brand.veterano"] = "Veterano Pizza",
+	["shop.brand.celentano"] = "Челентано",
+	["shop.brand.flowers"] = "Квіти",
+	["shop.brand.roshen"] = "Roshen",
+	["shop.brand.novaposhta"] = "Нова пошта",
+	["shop.entrance"] = "Вхід",
+	["shop.kulynychi.name"] = "Кулиничі",
+	["monument.plaque"] = "КАІ · 1933",
+
+	-- Корпуси
+	["building.name"] = "Корпус {1}",
+	["building.floor"] = "Поверх {1}",
+
+	-- Факультети
+	["fac.akf.name"] = "Аерокосмічний факультет",
+	["fac.gmf.name"] = "Гуманітарно-мистецький факультет",
+	["fac.faet.name"] = "Факультет аеронавігації, електроніки та телекомунікацій",
+	["fac.fabd.name"] = "Факультет архітектури, будівництва та дизайну",
+	["fac.fknt.name"] = "Факультет комп’ютерних наук та технологій",
+	["fac.fmfm.name"] = "Факультет менеджменту, фінансів та маркетингу",
+	["fac.fnz.name"] = "Факультет наук про здоров’я",
+	["fac.fpmv.name"] = "Факультет права та міжнародних відносин",
+	["fac.ftl.name"] = "Факультет транспорту і логістики",
+	["fac.akf.abbr"] = "АКФ",
+	["fac.gmf.abbr"] = "ГМФ",
+	["fac.faet.abbr"] = "ФАЕТ",
+	["fac.fabd.abbr"] = "ФАБД",
+	["fac.fknt.abbr"] = "ФКНТ",
+	["fac.fmfm.abbr"] = "ФМФМ",
+	["fac.fnz.abbr"] = "ФНЗ",
+	["fac.fpmv.abbr"] = "ФПМВ",
+	["fac.ftl.abbr"] = "ФТЛ",
+
+	-- Сповіщення
+	["toast.explored"] = "Досліджено: {1}",
+	["toast.levelup"] = "Новий рівень: {1}!",
+	["toast.quest_done"] = "Квест виконано: {1}",
+	["toast.badge"] = "Новий бейдж: {1}",
+	["toast.item"] = "Отримано: {1}",
+	["toast.bought"] = "Куплено: {1}",
+	["toast.no_coins"] = "Недостатньо монет",
+	["toast.have_item"] = "Цей предмет уже є",
+
+	-- Образи
+	["arch.pilot"] = "Пілот",
+	["arch.engineer"] = "Інженер",
+	["arch.scientist"] = "Науковець",
+	["arch.designer"] = "Дизайнер",
+	["arch.programmer"] = "Програміст",
+	["arch.business"] = "Бізнес / викладач",
+
+	-- Квести
+	["quest.first_steps"] = "Перші кроки: дослідіть перший факультет",
+	["quest.play_akf"] = "Пройдіть мініігру факультету АКФ",
+	["quest.play_gmf"] = "Пройдіть мініігру факультету ГМФ",
+	["quest.play_faet"] = "Пройдіть мініігру факультету ФАЕТ",
+	["quest.play_fabd"] = "Пройдіть мініігру факультету ФАБД",
+	["quest.play_fknt"] = "Пройдіть мініігру факультету ФКНТ",
+	["quest.play_fmfm"] = "Пройдіть мініігру факультету ФМФМ",
+	["quest.play_fnz"] = "Пройдіть мініігру факультету ФНЗ",
+	["quest.play_fpmv"] = "Пройдіть мініігру факультету ФПМВ",
+	["quest.play_ftl"] = "Пройдіть мініігру факультету ФТЛ",
+	["quest.play_three"] = "Пройдіть три різні мініігри",
+	["quest.explore_all"] = "Дослідіть усі факультети",
+	["quest.graduate"] = "Завершіть церемонію й отримайте студентський квиток",
+
+	-- Бейджі
+	["badge.first_steps.name"] = "Перші кроки",
+	["badge.first_steps.desc"] = "Дослідили перший факультет.",
+	["badge.explorer.name"] = "Дослідник кампусу",
+	["badge.explorer.desc"] = "Дослідили всі факультети.",
+	["badge.level_5.name"] = "П’ятий рівень",
+	["badge.level_5.desc"] = "Досягли 5 рівня.",
+	["badge.graduate.name"] = "Майбутній студент",
+	["badge.graduate.desc"] = "Пройшли церемонію та отримали студентський квиток.",
+	["badge.faculty.desc"] = "Пройшли мініігру факультету.",
+	["badge.faculty_akf.name"] = "Аерокосмос",
+	["badge.faculty_gmf.name"] = "Гуманітарні науки та мистецтво",
+	["badge.faculty_faet.name"] = "Аеронавігація",
+	["badge.faculty_fabd.name"] = "Архітектура та дизайн",
+	["badge.faculty_fknt.name"] = "Комп’ютерні науки",
+	["badge.faculty_fmfm.name"] = "Менеджмент і маркетинг",
+	["badge.faculty_fnz.name"] = "Науки про здоров’я",
+	["badge.faculty_fpmv.name"] = "Право та міжнародні відносини",
+	["badge.faculty_ftl.name"] = "Транспорт і логістика",
+
+	-- Предмети
+	["item.helmet"] = "Шолом пілота",
+	["item.jacket"] = "Куртка студента",
+	["item.hat_blue"] = "Синя кепка",
+	["item.hat_gold"] = "Золота корона",
+	["item.hat_green"] = "Зелений капелюх",
+	["item.hat_red"] = "Червоний берет",
+}
