@@ -1,12 +1,12 @@
 --!strict
--- Предметы: квестовые (выдаются сервером) и косметика (покупается за монеты).
+-- Предмети: квестові (видаються сервером) і косметика (купується за монети).
 
 export type ItemDef = {
 	id: string,
 	category: string, -- "quest" | "cosmetic"
 	nameKey: string,
 	icon: string,
-	price: number, -- только для cosmetic
+	price: number, -- лише для cosmetic
 	hatShape: Enum.PartType?,
 	hatSize: Vector3?,
 	hatColor: Color3?,

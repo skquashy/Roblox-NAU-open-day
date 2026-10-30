@@ -1,10 +1,10 @@
 --!strict
--- Живая миссия ФКНТ «Кіберзахист». В центре лаборатории голографическая сеть из шести узлов. На узлах
--- появляются угрозы трёх видов: вірус (лечится кнопкой «Встановити патч»), атака з IP («Заблокувати IP»)
--- и збій системи («Перезапустити»). У каждой угрозы таймер. Игрок жмёт нужную кнопку перед голограммой:
--- кнопка решает самую срочную угрозу своего вида. Неверное нажатие, пропущенная угроза снижают безопасность.
--- Результат = безопасность в конце (0..1). Нажатия принимает сервер через ProximityPrompt, клиент
--- ничего не присылает. Названия угроз и табло берутся из Locale на языке игрока.
+-- Жива місія ФКНТ «Кіберзахист». У центрі лабораторії голографічна мережа з шести вузлів. На вузлах
+-- з'являються загрози трьох видів: вірус (лікується кнопкою «Встановити патч»), атака з IP («Заблокувати IP»)
+-- і збій системи («Перезапустити»). У кожної загрози таймер. Гравець тисне потрібну кнопку перед голограмою:
+-- кнопка розв'язує найтерміновішу загрозу свого виду. Хибне натискання, пропущена загроза знижують безпеку.
+-- Результат = безпека наприкінці (0..1). Натискання приймає сервер через ProximityPrompt, клієнт
+-- нічого не надсилає. Назви загроз і табло беруться з Locale мовою гравця.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -54,8 +54,8 @@ local THREATS: { ThreatDef } = {
 }
 
 local DURATION = { 70, 85, 100 }
-local SPAWN_INTERVAL = { 5.5, 4.2, 3.2 } -- пауза между новыми угрозами
-local THREAT_TIME = { 11, 8.5, 7 } -- сколько секунд до того, как угроза будет пропущена
+local SPAWN_INTERVAL = { 5.5, 4.2, 3.2 } -- пауза між новими загрозами
+local THREAT_TIME = { 11, 8.5, 7 } -- скільки секунд до того, як загрозу буде пропущено
 local MAX_ACTIVE = { 1, 2, 3 }
 local MISSED_PENALTY = 15
 local WRONG_PENALTY = 4
@@ -88,7 +88,7 @@ local function findPart(room: Model, name: string): BasePart?
 	return nil
 end
 
--- Облачко над узлом: иконка, название угрозы и полоска оставшегося времени.
+-- Хмаринка над вузлом: іконка, назва загрози та смужка часу, що залишився.
 local function makeBillboard(node: BasePart, def: ThreatDef, lang: string): (BillboardGui, Frame)
 	local gui = Instance.new("BillboardGui")
 	gui.Name = "Threat"
@@ -305,7 +305,7 @@ function Mission.start(ctx: Types.MissionContext): Types.MissionRun?
 		for _, threat in table.clone(active) do
 			threat.left -= dt
 			threat.bar.Size = UDim2.fromScale(math.clamp(threat.left / threat.total, 0, 1), 1)
-			-- Луч угрозы мигает, чем меньше времени, тем чаще.
+			-- Промінь загрози блимає, чим менше часу, тим частіше.
 			local urgency = 1 - math.clamp(threat.left / threat.total, 0, 1)
 			local pulse = math.abs(math.sin(os.clock() * (3 + urgency * 9)))
 			beams[threat.node].Transparency = pulse * 0.6

@@ -1,11 +1,11 @@
 --!strict
--- Магазин «Кулиничі»: небольшой киоск на территории кампуса (размещение согласовано
--- с менеджерами магазина). По фото reference/kulynychi.webp: тёмно-серые панели, деревянные рейки,
--- большие окна, вывеска с названием, жёлтые стулья на террасе. Внутри видно через прозрачное стекло:
--- прилавок с витриной выпечки, кофемашина, холодильник с напитками и полки.
--- Логотип-герб с фото не воспроизводится: вместо него простой круглый знак; настоящий логотип можно
--- добавить картинкой, когда будет PNG с разрешением на использование.
--- Внутрь киоска игрок не заходит: окна и дверь стеклянные, но не проходимые.
+-- Магазин «Кулиничі»: невеликий кіоск на території кампусу (розміщення погоджено
+-- з менеджерами магазину). За фото reference/kulynychi.webp: темно-сірі панелі, дерев'яні рейки,
+-- великі вікна, вивіска з назвою, жовті стільці на терасі. Всередині видно крізь прозоре скло:
+-- прилавок із вітриною випічки, кавомашина, холодильник із напоями та полиці.
+-- Логотип-герб із фото не відтворюється: замість нього простий круглий знак; справжній логотип можна
+-- додати зображенням, коли буде PNG з дозволом на використання.
+-- Усередину кіоска гравець не заходить: вікна й двері скляні, але непрохідні.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -85,8 +85,8 @@ local function up(base: Vector3, y: number): Vector3
 	return base + Vector3.new(0, y, 0)
 end
 
--- Продукты. base: точка на поверхности, куда ставим (низ предмета, центр основания). Размер каждого
--- предмета не больше его footprint из KINDS, поэтому соседи в ряду не пересекаются.
+-- Продукти. base: точка на поверхні, куди ставимо (низ предмета, центр основи). Розмір кожного
+-- предмета не більший за його footprint з KINDS, тому сусіди в ряду не перетинаються.
 local function bun(ctx: Context, base: Vector3, _random: Random)
 	disc(ctx, "Bun", 1.5, 0.6, up(base, 0.3), Color3.fromRGB(214, 160, 90))
 	disc(ctx, "BunTop", 1.15, 0.3, up(base, 0.75), Color3.fromRGB(190, 130, 66))
@@ -269,7 +269,7 @@ end
 
 type Kind = { width: number, build: (ctx: Context, base: Vector3, random: Random) -> () }
 
--- width: ширина занимаемого места по оси X; соседние предметы ставятся с зазором GAP.
+-- width: ширина місця, яке займає, по осі X; сусідні предмети ставляться із проміжком GAP.
 local KINDS: { [string]: Kind } = {
 	bun = { width = 1.6, build = bun },
 	croissant = { width = 3.0, build = croissant },
@@ -285,8 +285,8 @@ local KINDS: { [string]: Kind } = {
 local SNACKS = { "bottle", "can", "juice", "pack", "noodles" }
 local GAP = 0.25
 
--- Ставит предметы рядом в ряд с центром centerX: ширина ряда не больше maxWidth, предметы не пересекаются.
--- names: заданный порядок; если nil, берём случайные снеки и напитки, пока ряд не заполнится.
+-- Ставить предмети поруч у ряд із центром centerX: ширина ряду не більша за maxWidth, предмети не перетинаються.
+-- names: заданий порядок; якщо nil, беремо випадкові снеки й напої, поки ряд не заповниться.
 local function fillRow(
 	ctx: Context,
 	names: { string }?,
@@ -356,9 +356,9 @@ local function chair(parent: Instance, origin: CFrame, x: number, z: number, yaw
 	end
 end
 
--- Внутренняя обстановка: полки с напитками и снеками, холодильник, прилавок с витриной и кофемашиной.
--- Размеры подобраны так, что полки, холодильник и прилавок не пересекаются: холодильник в левом заднем
--- углу (x от -10.4 до -6), полки правее (x от -4.6 до 10.2), прилавок перед полками (z от -1.4 до 1.8).
+-- Внутрішнє оздоблення: полиці з напоями та снеками, холодильник, прилавок із вітриною та кавомашиною.
+-- Розміри підібрано так, що полиці, холодильник і прилавок не перетинаються: холодильник у лівому задньому
+-- куті (x від -10.4 до -6), полиці правіше (x від -4.6 до 10.2), прилавок перед полицями (z від -1.4 до 1.8).
 local function buildInterior(ctx: Context, random: Random)
 	local function box(
 		name: string,
@@ -371,7 +371,7 @@ local function buildInterior(ctx: Context, random: Random)
 	end
 	local steel = Color3.fromRGB(200, 204, 210)
 
-	-- Стеллаж вдоль задней стены: боковины, три полки, на каждой ряд напитков и снеков.
+	-- Стелаж уздовж задньої стіни: боковини, три полиці, на кожній ряд напоїв і снеків.
 	local shelfX, shelfWidth = 2.8, 14.8
 	local backZ = DEPTH / 2 - WALL
 	for _, sideX in { shelfX - shelfWidth / 2, shelfX + shelfWidth / 2 } do
@@ -392,7 +392,7 @@ local function buildInterior(ctx: Context, random: Random)
 		)
 		fillRow(ctx, nil, shelfX, backZ - 0.9, shelfY + 0.125, shelfWidth - 0.6, random)
 	end
-	-- Доска меню над стеллажом: цветные полоски вместо текста.
+	-- Дошка меню над стелажем: кольорові смужки замість тексту.
 	box(
 		"MenuBoard",
 		Vector3.new(13.5, 1, 0.1),
@@ -407,7 +407,7 @@ local function buildInterior(ctx: Context, random: Random)
 		box("MenuLine", Vector3.new(width, 0.12, 0.05), Vector3.new(x, y, backZ - 0.14), CREAM)
 	end
 
-	-- Холодильник в левом заднем углу: каркас с открытым фронтом, полки с бутылками, стеклянная дверца.
+	-- Холодильник у лівому задньому куті: каркас із відкритим фронтом, полиці з пляшками, скляні дверцята.
 	local fridgeX, fridgeZ = -8.2, 4.2
 	local fridgeBottom = INNER_FLOOR
 	box(
@@ -476,7 +476,7 @@ local function buildInterior(ctx: Context, random: Random)
 		DARKER
 	)
 
-	-- Прилавок: тумба с деревянными панелями и тёмной столешницей.
+	-- Прилавок: тумба з дерев'яними панелями та темною стільницею.
 	local counterX, counterZ = 4.6, 0.2
 	local topY = INNER_FLOOR + 3.5
 	box(
@@ -499,7 +499,7 @@ local function buildInterior(ctx: Context, random: Random)
 		Color3.fromRGB(70, 72, 78)
 	)
 
-	-- Витрина: стеклянная рамка, два ряда выпечки на лотках без пересечений.
+	-- Вітрина: скляна рамка, два ряди випічки на лотках без перетинів.
 	local caseX, caseWidth, caseDepth = 2.9, 8, 2.8
 	local caseHeight = 2.2
 	local rows = {
@@ -540,7 +540,7 @@ local function buildInterior(ctx: Context, random: Random)
 	)
 	caseGlass.Transparency = 0.8
 
-	-- Кофемашина справа и стаканчики перед ней; касса слева.
+	-- Кавомашина праворуч і стаканчики перед нею; каса ліворуч.
 	local machineX, machineZ = 9, 1
 	box(
 		"CoffeeBody",
@@ -594,7 +594,7 @@ local function buildInterior(ctx: Context, random: Random)
 		Color3.fromRGB(230, 230, 225)
 	)
 
-	-- Тёплый свет внутри, чтобы товары было видно через окна.
+	-- Тепле світло всередині, щоб товари було видно крізь вікна.
 	local lamp = Build.part(
 		ctx.model,
 		Vector3.new(4, 0.15, 1),
@@ -605,7 +605,7 @@ local function buildInterior(ctx: Context, random: Random)
 	Build.glow(lamp, Color3.fromRGB(255, 236, 200), 1.2, 18)
 end
 
--- Строит киоск: origin на земле в центре, -Z смотрит на вход. Возвращает занятую область (в мире).
+-- Будує кіоск: origin на землі в центрі, -Z дивиться на вхід. Повертає зайняту область (у світі).
 function Kiosk.build(parent: Instance, origin: CFrame): Rect
 	local model = Instance.new("Model")
 	model.Name = "Kiosk_kulynychi"
@@ -625,7 +625,7 @@ function Kiosk.build(parent: Instance, origin: CFrame): Rect
 		return Build.part(model, size, origin * CFrame.new(offset), color, opts)
 	end
 
-	-- Оболочка: пол, задняя и боковые стены, потолок, крыша. Передняя стена собирается из простенков и стёкол.
+	-- Оболонка: підлога, задня та бокові стіни, стеля, дах. Передня стіна збирається з простінків і стекол.
 	part(
 		"Floor",
 		Vector3.new(WIDTH + 2, FLOOR, DEPTH + 2),
@@ -665,7 +665,7 @@ function Kiosk.build(parent: Instance, origin: CFrame): Rect
 		Vector3.new(0, FLOOR + HEIGHT + 0.5, 0),
 		DARKER
 	)
-	-- Стена над окнами и под ними (проём двери остаётся стеклянным).
+	-- Стіна над вікнами та під ними (отвір дверей залишається скляним).
 	local frontWallZ = frontZ + WALL / 2
 	part(
 		"Header",
@@ -686,7 +686,7 @@ function Kiosk.build(parent: Instance, origin: CFrame): Rect
 		DARK
 	)
 
-	-- Вывеска с названием и круглым знаком слева.
+	-- Вивіска з назвою та круглим знаком ліворуч.
 	local sign = part(
 		"Sign",
 		Vector3.new(WIDTH - 1, 2.8, 0.6),
@@ -714,13 +714,13 @@ function Kiosk.build(parent: Instance, origin: CFrame): Rect
 		{ name = "BadgeDisc", canCollide = false }
 	)
 
-	-- Деревянные рейки: нижняя полоса (кроме проёма двери) и верхняя под вывеской.
+	-- Дерев'яні рейки: нижня смуга (крім отвору дверей) і верхня під вивіскою.
 	local wallZ = frontZ - 0.25
 	part("WoodLowLeft", Vector3.new(5.6, 2.2, 0.5), Vector3.new(-8.2, FLOOR + 1.1, wallZ), WOOD)
 	part("WoodLowRight", Vector3.new(13, 2.2, 0.5), Vector3.new(4.5, FLOOR + 1.1, wallZ), WOOD)
 	part("WoodTop", Vector3.new(WIDTH, 1, 0.5), Vector3.new(0, FLOOR + 6.9, wallZ), WOOD)
 
-	-- Окна и дверь: прозрачное стекло, между ними серые простенки.
+	-- Вікна та двері: прозоре скло, між ними сірі простінки.
 	local glassY = FLOOR + 4.5
 	local openings = {
 		{ x = -8.25, width = 4.5 },
@@ -761,7 +761,7 @@ function Kiosk.build(parent: Instance, origin: CFrame): Rect
 
 	buildInterior(ctx, Random.new(1995))
 
-	-- Терраса: столик и два жёлтых стула лицом к столу, урна слева у стены.
+	-- Тераса: столик і два жовті стільці обличчям до столу, урна ліворуч біля стіни.
 	local terraceZ = frontZ - 4.5
 	local tableX = 4
 	part("TableTop", Vector3.new(2.6, 0.2, 2.6), Vector3.new(tableX, 2.6, terraceZ), WOOD)
@@ -775,7 +775,7 @@ function Kiosk.build(parent: Instance, origin: CFrame): Rect
 		Color3.fromRGB(150, 154, 160)
 	)
 
-	-- Место для продавца-NPC у входа.
+	-- Місце для продавця-NPC біля входу.
 	local spot = Build.part(
 		model,
 		Vector3.new(3, 0.2, 3),

@@ -1,6 +1,6 @@
 --!strict
--- Серверная обёртка над RemoteEvent: создание в одном месте, ограничение частоты,
--- единая точка отправки. Ремоуты НИКОГДА не создаются где-то ещё.
+-- Серверна обгортка над RemoteEvent: створення в одному місці, обмеження частоти,
+-- єдина точка надсилання. Ремоути НІКОЛИ не створюються деінде.
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -57,7 +57,7 @@ function NetServer.setup()
 	end)
 end
 
--- Подписка на ремоут от клиента. Частота ограничивается автоматически.
+-- Підписка на ремоут від клієнта. Частота обмежується автоматично.
 function NetServer.on(name: string, handler: (player: Player, ...any) -> ())
 	local event = events[name]
 	local limits = Remotes.toServer[name]

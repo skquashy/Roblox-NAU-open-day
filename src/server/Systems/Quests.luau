@@ -1,6 +1,6 @@
 --!strict
--- Квесты: сервер сам определяет выполнение цели по событиям (вход в зону, диалог, результат игры).
--- Клиент только показывает список.
+-- Квести: сервер сам визначає виконання цілі за подіями (вхід у зону, діалог, результат гри).
+-- Клієнт лише показує список.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -55,7 +55,7 @@ local function advance(player: Player, def: QuestData.QuestDef, newProgress: num
 	end
 end
 
--- Событие "+1" для квестов с конкретной целью (talk / collect / visit / minigame / finale).
+-- Подія "+1" для квестів із конкретною ціллю (talk / collect / visit / minigame / finale).
 function Quests.report(player: Player, kind: string, target: string)
 	local profile = PlayerData.get(player)
 	if not profile then
@@ -69,7 +69,7 @@ function Quests.report(player: Player, kind: string, target: string)
 	end
 end
 
--- Для квестов-счётчиков (explore_count, minigame_count): задаёт абсолютное значение.
+-- Для квестів-лічильників (explore_count, minigame_count): задає абсолютне значення.
 function Quests.setCount(player: Player, kind: string, value: number)
 	for _, def in QuestData.list do
 		if def.kind == kind then
@@ -89,7 +89,7 @@ local function recount(player: Player, profile: Types.Profile)
 	Quests.setCount(player, "minigame_count", passed)
 end
 
--- Вызывается мини-играми после успешного прохождения.
+-- Викликається мініграми після успішного проходження.
 function Quests.recountMinigames(player: Player)
 	local profile = PlayerData.get(player)
 	if profile then

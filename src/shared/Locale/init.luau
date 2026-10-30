@@ -1,7 +1,7 @@
 --!strict
--- Локализация. Весь текст игры берётся ТОЛЬКО отсюда, по ключам.
--- Ключ вида "@ui.close" внутри данных/аргументов означает "это ключ, а не готовый текст".
--- Параметры в строках: {1}, {2} ... подставляются из массива args.
+-- Локалізація. Увесь текст гри береться ЛИШЕ звідси, за ключами.
+-- Ключ виду "@ui.close" усередині даних/аргументів означає «це ключ, а не готовий текст».
+-- Параметри в рядках: {1}, {2} ... підставляються з масиву args.
 
 local Config = require(script.Parent.Config)
 
@@ -41,7 +41,7 @@ function Locale.translate(lang: string, key: string, args: { string }?): string
 	return text
 end
 
--- Если строка начинается с "@" - это ключ, иначе - готовый текст.
+-- Якщо рядок починається з "@" - це ключ, інакше - готовий текст.
 function Locale.text(lang: string, value: string, args: { string }?): string
 	if string.sub(value, 1, 1) == "@" then
 		return Locale.translate(lang, string.sub(value, 2), args)
@@ -49,7 +49,7 @@ function Locale.text(lang: string, value: string, args: { string }?): string
 	return value
 end
 
--- Для проверки скриптом scripts/check_locale.py и для отладки.
+-- Для перевірки скриптом scripts/check_locale.py та для налагодження.
 function Locale.keys(lang: string): { string }
 	local out = {}
 	for key in tables[lang] do

@@ -1,6 +1,6 @@
 --!strict
--- Фирменный стиль КАІ для интерфейса и вывесок. Цвета из брифа: #267CEB, #224597, #9EDFFF,
--- акцент #E8418E. Нейтральные цвета (ink, white, mist) производные: добавлены только для читаемости.
+-- Фірмовий стиль КАІ для інтерфейсу та вивісок. Кольори з брифа: #267CEB, #224597, #9EDFFF,
+-- акцент #E8418E. Нейтральні кольори (ink, white, mist) похідні: додані лише для читабельності.
 
 local Config = require(script.Parent.Config)
 
@@ -18,7 +18,7 @@ Theme.colors = table.freeze({
 	mist = Color3.fromHex("#EAF4FF"),
 })
 
--- Шрифт Geologica, если его ID вписан в Config.GEOLOGICA_FONT_ID, иначе запасной.
+-- Шрифт Geologica, якщо його ID вписано в Config.GEOLOGICA_FONT_ID, інакше запасний.
 function Theme.font(weight: Enum.FontWeight?): Font
 	local family = FALLBACK_FAMILY
 	if Config.GEOLOGICA_FONT_ID ~= "" then

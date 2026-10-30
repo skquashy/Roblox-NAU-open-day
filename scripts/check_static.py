@@ -50,7 +50,7 @@ for f in files:
     if re.search(r"(=|\(|,|return)\s*if\s", code):
         errors.append(f"{f.relative_to(root)}: if-выражение (проверка баланса блоков ненадёжна)")
 
-# Ремоуты
+# Ремоути
 remotes = (src / "shared/Remotes.luau").read_text(encoding="utf-8")
 to_server = set(re.findall(r"^\t(\w+) = \{ rate", remotes, re.M))
 to_client = set(re.findall(r'^\t"(\w+)",', remotes, re.M))
@@ -65,7 +65,7 @@ for f in files:
     for name in re.findall(r'NetClient\.fire\(\s*"(\w+)"', text):
         if name not in to_server: errors.append(f"{f.name}: NetClient.fire неизвестный ремоут {name}")
 
-# Клиентские ремоуты: у каждого есть слушатель на клиенте
+# Клієнтські ремоути: у кожного є слухач на клієнті
 client_text = "".join(p.read_text(encoding="utf-8") for p in (src / "client").rglob("*.luau"))
 for name in sorted(to_client):
     if not re.search(r'NetClient\.on\(\s*"' + name + '"', client_text):
@@ -75,7 +75,7 @@ for name in sorted(to_server):
     if not re.search(r'NetServer\.on\(\s*"' + name + '"', server_text):
         errors.append(f"ремоут {name} никто не слушает на сервере")
 
-# Модули, на которые есть require(script.Parent.X) / Systems
+# Модулі, на які є require(script.Parent.X) / Systems
 for f in files:
     text = f.read_text(encoding="utf-8")
     for m in re.finditer(r"require\(script\.Parent\.(\w+)\)", text):

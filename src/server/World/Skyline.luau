@@ -1,8 +1,8 @@
 --!strict
--- Фон вокруг кампуса: вместо пустого горизонта (моря) городская панорама Киева: кольца жилых и офисных
--- домов на разном расстоянии и несколько узнаваемых силуэтов (телевышка, колокольня с золотыми куполами,
--- монумент). Это декорация, расположение ориентиров не топографическое.
--- Всё лежит в модели с ModelStreamingMode = Persistent: иначе StreamingEnabled не показывает далёкие объекты.
+-- Тло навколо кампусу: замість порожнього горизонту (моря) міська панорама Києва: кільця житлових і офісних
+-- будинків на різній відстані та кілька впізнаваних силуетів (телевежа, дзвіниця із золотими банями,
+-- монумент). Це декорація, розташування орієнтирів не топографічне.
+-- Усе лежить у моделі з ModelStreamingMode = Persistent: інакше StreamingEnabled не показує далекі об'єкти.
 
 local Build = require(script.Parent.Build)
 local Apartment = require(script.Parent.Buildings.Apartment)
@@ -20,9 +20,9 @@ local PALETTE = {
 	Color3.fromRGB(180, 180, 176),
 }
 local WINDOWS = Color3.fromRGB(80, 104, 138)
-local FLOOR_BAND = 26 -- через сколько студов по высоте тёмная полоса окон
+local FLOOR_BAND = 26 -- через скільки стадів по висоті темна смуга вікон
 
--- Кольцо домов вокруг center: count штук на расстоянии от minRadius до maxRadius.
+-- Кільце будинків навколо center: count штук на відстані від minRadius до maxRadius.
 local function ring(
 	model: Model,
 	random: Random,
@@ -35,7 +35,7 @@ local function ring(
 	maxWidth: number
 )
 	for i = 1, count do
-		if random:NextNumber() > 0.12 then -- иногда пропуски, чтобы кольцо не было стеной
+		if random:NextNumber() > 0.12 then -- іноді пропуски, щоб кільце не було стіною
 			local angle = (i + random:NextNumber(-0.4, 0.4)) / count * math.pi * 2
 			local radius = random:NextNumber(minRadius, maxRadius)
 			local width = random:NextNumber(maxWidth * 0.5, maxWidth)
@@ -83,7 +83,7 @@ local function ring(
 	end
 end
 
--- Кольцо детальных жилых домов фасадом к центру кампуса (с балконами, цоколем и подъездами).
+-- Кільце детальних житлових будинків фасадом до центру кампусу (з балконами, цоколем і під'їздами).
 local function nearRing(
 	model: Model,
 	random: Random,
@@ -114,7 +114,7 @@ local function nearRing(
 	end
 end
 
--- Телевышка: сужающийся стержень с двумя смотровыми площадками и антенной.
+-- Телевежа: звужений стрижень із двома оглядовими майданчиками та антеною.
 local function tvTower(model: Model, base: Vector3)
 	local steel = Color3.fromRGB(190, 194, 202)
 	local heights = { 120, 100, 80, 60 }
@@ -152,7 +152,7 @@ local function tvTower(model: Model, base: Vector3)
 	)
 end
 
--- Колокольня с золотым куполом и два храма поменьше.
+-- Дзвіниця із золотою банею та два менші храми.
 local function bellTower(model: Model, base: Vector3)
 	local wall = Color3.fromRGB(240, 238, 228)
 	local gold = Color3.fromRGB(232, 184, 56)
@@ -184,7 +184,7 @@ local function bellTower(model: Model, base: Vector3)
 	end
 end
 
--- Монумент: постамент и вытянутая фигура с поднятой рукой.
+-- Монумент: постамент і витягнута фігура з піднятою рукою.
 local function monument(model: Model, base: Vector3)
 	local stone = Color3.fromRGB(150, 153, 160)
 	local steel = Color3.fromRGB(196, 202, 210)
@@ -216,14 +216,14 @@ local function monument(model: Model, base: Vector3)
 	)
 end
 
--- Строит панораму вокруг точки center (центр кампуса). Возвращает модель.
+-- Будує панораму навколо точки center (центр кампусу). Повертає модель.
 function Skyline.build(parent: Instance, center: Vector3): Model
 	local model = Instance.new("Model")
 	model.Name = "Skyline"
 	model.ModelStreamingMode = Enum.ModelStreamingMode.Persistent
 	model.Parent = parent
 
-	-- Земля за пределами кампуса: большая плоскость чуть ниже кампусной травы.
+	-- Земля за межами кампусу: велика площина трохи нижче за кампусну траву.
 	Build.part(
 		model,
 		Vector3.new(7000, 2, 7000),
@@ -233,9 +233,9 @@ function Skyline.build(parent: Instance, center: Vector3): Model
 	)
 
 	local random = Random.new(2026)
-	nearRing(model, random, center, 28, 620, 820) -- ближние детальные дома (5-9 этажей)
-	ring(model, random, center, 90, 900, 1300, 60, 180, 110) -- средний пояс
-	ring(model, random, center, 120, 1350, 2300, 110, 320, 140) -- дальние высотки
+	nearRing(model, random, center, 28, 620, 820) -- ближні детальні будинки (5-9 поверхів)
+	ring(model, random, center, 90, 900, 1300, 60, 180, 110) -- середній пояс
+	ring(model, random, center, 120, 1350, 2300, 110, 320, 140) -- далекі висотки
 
 	tvTower(model, center + Vector3.new(-1500, 0, -1900))
 	bellTower(model, center + Vector3.new(1250, 0, -1650))

@@ -1,6 +1,6 @@
 --!strict
--- Текущий язык интерфейса и привязка текстов к ключам локализации.
--- bind(instance, key) обновляет Text автоматически при смене языка.
+-- Поточна мова інтерфейсу та прив'язка текстів до ключів локалізації.
+-- bind(instance, key) оновлює Text автоматично під час зміни мови.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -26,7 +26,7 @@ function Lang.t(key: string, args: { string }?): string
 	return Locale.translate(current, key, args)
 end
 
--- Значение с "@" в начале считается ключом, иначе это готовый текст.
+-- Значення з "@" на початку вважається ключем, інакше це готовий текст.
 function Lang.text(value: string, args: { string }?): string
 	return Locale.text(current, value, args)
 end

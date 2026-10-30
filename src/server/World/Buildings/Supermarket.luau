@@ -1,10 +1,10 @@
 --!strict
--- Супермаркет «Фора» с площадкой перед входом и парковкой. Здание полое: сквозь прозрачные витрины видны
--- торговый зал, стеллажи с товарами, холодильная стена, кассы и светильники. Снаружи тёмные панели,
--- деревянная обшивка у основания, зелёная вывеска с красным знаком, тамбур, навес с тележками, урны.
--- Использование названия согласовано с руководством магазина.
--- origin: центр здания на земле, -Z смотрит на площадку и проспект. Внимание: из-за поворота здания
--- локальная ось X идёт влево от зрителя перед фасадом, поэтому «вправо» на экране это меньший X.
+-- Супермаркет «Фора» з майданчиком перед входом і парковкою. Будівля порожниста: крізь прозорі вітрини видно
+-- торговий зал, стелажі з товарами, холодильну стіну, каси та світильники. Зовні темні панелі,
+-- дерев'яна обшивка в основі, зелена вивіска з червоним знаком, тамбур, навіс із візками, урни.
+-- Використання назви погоджено з керівництвом магазину.
+-- origin: центр будівлі на землі, -Z дивиться на майданчик і проспект. Увага: через поворот будівлі
+-- локальна вісь X йде ліворуч від глядача перед фасадом, тому «праворуч» на екрані це менший X.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -35,7 +35,7 @@ local PRODUCTS = {
 	Color3.fromRGB(232, 65, 142),
 	Color3.fromRGB(245, 245, 240),
 }
-local PITCH = 1.1 -- шаг товаров вдоль полки; самый широкий товар 1.0
+local PITCH = 1.1 -- крок товарів уздовж полиці; найширший товар 1.0
 
 type Context = { model: Model, origin: CFrame }
 
@@ -52,7 +52,7 @@ local function put(
 	return Build.part(ctx.model, size, ctx.origin * offset, color, opts)
 end
 
--- Вывеска: зелёная плита с надписью, красный знак справа от надписи (на экране).
+-- Вивіска: зелена плита з написом, червоний знак праворуч від напису (на екрані).
 local function sign(ctx: Context, x: number, y: number, frontZ: number)
 	local board =
 		put(ctx, "SignBoard", Vector3.new(24, 5, 1), CFrame.new(x, y, frontZ - 0.5), GREEN)
@@ -75,7 +75,7 @@ local function sign(ctx: Context, x: number, y: number, frontZ: number)
 	)
 	label.Text = Locale.translate("uk", "shop.fora")
 	label.Parent = gui
-	-- Знак стоит с меньшим локальным X, чтобы на экране оказаться правее надписи.
+	-- Знак стоїть із меншим локальним X, щоб на екрані опинитися правіше за напис.
 	local logoPosition = (ctx.origin * CFrame.new(x - 9, y, frontZ - 1.2)).Position
 	Build.cylinder(
 		ctx.model,
@@ -98,7 +98,7 @@ local function sign(ctx: Context, x: number, y: number, frontZ: number)
 	)
 end
 
--- Товар: бутылка, банка, коробка или пакет. base: центр основания; ширина не больше 1.0, глубина не больше 0.7.
+-- Товар: пляшка, банка, коробка або пакет. base: центр основи; ширина не більша за 1.0, глибина не більша за 0.7.
 local function product(ctx: Context, base: Vector3, random: Random)
 	local color = PRODUCTS[random:NextInteger(1, #PRODUCTS)]
 	local kind = random:NextInteger(1, 4)
@@ -153,7 +153,7 @@ local function product(ctx: Context, base: Vector3, random: Random)
 	end
 end
 
--- Заполнение полки: count товаров вдоль X с шагом PITCH, центр ряда centerX.
+-- Заповнення полиці: count товарів уздовж X з кроком PITCH, центр ряду centerX.
 local function shelfRow(
 	ctx: Context,
 	centerX: number,
@@ -168,7 +168,7 @@ local function shelfRow(
 	end
 end
 
--- Двусторонний стеллаж вдоль X: основание, задняя панель, три яруса полок с обеих сторон.
+-- Двосторонній стелаж уздовж X: основа, задня панель, три яруси полиць з обох боків.
 local function gondola(ctx: Context, x: number, z: number, length: number, random: Random)
 	put(
 		ctx,
@@ -202,7 +202,7 @@ local function gondola(ctx: Context, x: number, z: number, length: number, rando
 	end
 end
 
--- Холодильная стена у задней стены: каркас, ярусы с бутылками, стеклянные дверцы.
+-- Холодильна стіна біля задньої стіни: каркас, яруси з пляшками, скляні дверцята.
 local function fridge(ctx: Context, x: number, z: number, length: number, random: Random)
 	local top = FLOOR_TOP + 8
 	put(
@@ -259,7 +259,7 @@ local function fridge(ctx: Context, x: number, z: number, length: number, random
 	glass.Transparency = 0.75
 end
 
--- Касса: стойка с лентой, терминал и стопка корзин.
+-- Каса: стійка зі стрічкою, термінал і стос кошиків.
 local function checkout(ctx: Context, x: number, z: number)
 	put(
 		ctx,
@@ -305,7 +305,7 @@ local function checkout(ctx: Context, x: number, z: number)
 	end
 end
 
--- Торговый зал: стеллажи, холодильники, кассы и светильники.
+-- Торговий зал: стелажі, холодильники, каси та світильники.
 local function interior(ctx: Context, width: number, depth: number, random: Random)
 	local frontZ = -depth / 2
 	local backZ = depth / 2
@@ -323,7 +323,7 @@ local function interior(ctx: Context, width: number, depth: number, random: Rand
 	for _, z in { frontZ + 8, frontZ + 14, frontZ + 20 } do
 		checkout(ctx, 18, z)
 	end
-	-- Потолочные панели; свет излучают четыре из них, остальные просто светятся.
+	-- Стельові панелі; світло випромінюють чотири з них, решта просто світяться.
 	local lit = 0
 	for _, z in { frontZ + 8, 0, backZ - 8 } do
 		for _, x in { -22, -11, 0, 11, 22 } do
@@ -343,7 +343,7 @@ local function interior(ctx: Context, width: number, depth: number, random: Rand
 	end
 end
 
--- Оболочка: пол, задняя и боковые стены, потолок и фасад из простенков и стёкол.
+-- Оболонка: підлога, задня та бокові стіни, стеля й фасад із простінків і стекол.
 local function shell(ctx: Context, width: number, depth: number)
 	local frontZ = -depth / 2
 	put(
@@ -391,7 +391,7 @@ local function shell(ctx: Context, width: number, depth: number)
 		DARK,
 		{ canCollide = false }
 	)
-	-- Внутренняя облицовка стен светлая, чтобы зал не казался чёрным.
+	-- Внутрішнє облицювання стін світле, щоб зал не здавався чорним.
 	put(
 		ctx,
 		"InnerBack",
@@ -411,7 +411,7 @@ local function shell(ctx: Context, width: number, depth: number)
 		)
 	end
 
-	-- Фасад: деревянный цоколь, верхняя балка под вывеской, простенки и стёкла.
+	-- Фасад: дерев'яний цоколь, верхня балка під вивіскою, простінки й скла.
 	local wallZ = frontZ + WALL / 2
 	put(
 		ctx,
@@ -444,7 +444,7 @@ local function shell(ctx: Context, width: number, depth: number)
 			FRAME
 		)
 	end
-	-- Глухие участки фасада по краям и между витринами и тамбуром.
+	-- Глухі ділянки фасаду по краях і між вітринами та тамбуром.
 	put(ctx, "WallEdge", Vector3.new(3, 8.6, WALL), CFrame.new(-width / 2 + 1.5, 7.7, wallZ), DARK)
 	local solidFrom = startX + bays * 10
 	local vestibuleLeft = width / 2 - 15
@@ -460,7 +460,7 @@ local function shell(ctx: Context, width: number, depth: number)
 	put(ctx, "WallRight", Vector3.new(3, 8.6, WALL), CFrame.new(width / 2 - 1.5, 7.7, wallZ), DARK)
 end
 
--- Строит магазин width на depth: оболочку, зал, вывеску, тамбур, навес с тележками, урны.
+-- Будує магазин width на depth: оболонку, зал, вивіску, тамбур, навіс із візками, урни.
 function Supermarket.build(parent: Instance, origin: CFrame, width: number, depth: number)
 	local model = Instance.new("Model")
 	model.Name = "Supermarket_fora"
@@ -473,7 +473,7 @@ function Supermarket.build(parent: Instance, origin: CFrame, width: number, dept
 	interior(ctx, width, depth, random)
 	sign(ctx, -width / 2 + 14, HEIGHT - 2.5, frontZ)
 
-	-- Деревянная обшивка боковых стен снаружи.
+	-- Дерев'яна обшивка бічних стін ззовні.
 	for _, side in { -1, 1 } do
 		put(
 			ctx,
@@ -485,8 +485,8 @@ function Supermarket.build(parent: Instance, origin: CFrame, width: number, dept
 		)
 	end
 
-	-- Тамбур справа: стеклянная коробка с рамой, двумя створками дверей, ручками и надписью «Вхід».
-	-- Стекло и двери твёрдые: пройти сквозь вход нельзя.
+	-- Тамбур праворуч: скляна коробка з рамою, двома стулками дверей, ручками та написом «Вхід».
+	-- Скло й двері тверді: пройти крізь вхід не можна.
 	local vestibuleX = width / 2 - 9
 	local glassOptions: Build.Options = { material = Enum.Material.Glass, transparency = 0.55 }
 	put(
@@ -570,7 +570,7 @@ function Supermarket.build(parent: Instance, origin: CFrame, width: number, dept
 		nil
 	)
 
-	-- Крыша: кондиционеры и световой фонарь.
+	-- Дах: кондиціонери та світловий ліхтар.
 	for i = 0, 3 do
 		put(
 			ctx,
@@ -590,7 +590,7 @@ function Supermarket.build(parent: Instance, origin: CFrame, width: number, dept
 		{ material = Enum.Material.Glass, transparency = 0.4, canCollide = false }
 	)
 
-	-- Навес с тележками слева (на экране справа) и урны у фасада.
+	-- Навіс із візками ліворуч (на екрані праворуч) і урни біля фасаду.
 	local cartX = -width / 2 + 4
 	put(ctx, "CartRoof", Vector3.new(8, 0.5, 3.5), CFrame.new(cartX, 4.6, frontZ - 4), GREEN)
 	for _, x in { cartX - 3.6, cartX + 3.6 } do
@@ -622,7 +622,7 @@ function Supermarket.build(parent: Instance, origin: CFrame, width: number, dept
 	Build.bench(model, origin * CFrame.new(width / 2 - 24, 0.5, frontZ - 3))
 end
 
--- Парковка: асфальт, разметка мест, часть мест занята машинами. center: центр, длинная сторона вдоль Z.
+-- Парковка: асфальт, розмітка місць, частина місць зайнята машинами. center: центр, довгий бік уздовж Z.
 function Supermarket.buildLot(parent: Instance, center: Vector3, width: number, depth: number)
 	local folder = Instance.new("Folder")
 	folder.Name = "ParkingLot"
@@ -653,7 +653,7 @@ function Supermarket.buildLot(parent: Instance, center: Vector3, width: number, 
 			if random:NextNumber() < 0.55 then
 				local color = Vehicles.carColors[random:NextInteger(1, #Vehicles.carColors)]
 				local position = Vector3.new(slotCenterX, 0.4, z)
-				-- Машина стоит носом к проезду: длина вдоль оси X.
+				-- Машина стоїть носом до проїзду: довжина вздовж осі X.
 				Vehicles.car(
 					folder,
 					CFrame.lookAt(position, position + Vector3.new(-side, 0, 0)),

@@ -1,9 +1,9 @@
 --!strict
--- Лаборатория факультета: полое помещение с дверью, пультом и ProximityPrompt «Грати». Внутреннюю обстановку
--- задаёт функция dress (стойки, шлюз и т.п. для конкретной игры). Модель получает тег Config.ROOM_TAG и
--- атрибуты FacultyId и Radius; серверная система Minigames находит её по ним и вешает игру на пульт.
--- origin: центр на земле, -Z смотрит на дверь. Сейчас лаборатории стоят отдельными павильонами, позже их
--- можно перенести внутрь корпусов (этап интерьеров).
+-- Лабораторія факультету: порожнисте приміщення з дверима, пультом і ProximityPrompt «Грати». Внутрішнє оздоблення
+-- задає функція dress (стійки, шлюз тощо для конкретної гри). Модель отримує тег Config.ROOM_TAG та
+-- атрибути FacultyId і Radius; серверна система Minigames знаходить її за ними й чіпляє гру на пульт.
+-- origin: центр на землі, -Z дивиться на двері. Зараз лабораторії стоять окремими павільйонами, пізніше їх
+-- можна перенести всередину корпусів (етап інтер'єрів).
 
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -29,7 +29,7 @@ local function bilingual(key: string): string
 	return Locale.translate("uk", key) .. " / " .. Locale.translate("en", key)
 end
 
--- Строит лабораторию size = (ширина, высота, глубина) и возвращает модель.
+-- Будує лабораторію size = (ширина, висота, глибина) і повертає модель.
 function LabRoom.build(
 	parent: Instance,
 	origin: CFrame,
@@ -56,7 +56,7 @@ function LabRoom.build(
 		return Build.part(model, partSize, origin * offset, color, opts)
 	end
 
-	-- Пол, стены, потолок и крыша.
+	-- Підлога, стіни, стеля й дах.
 	put("Floor", Vector3.new(width, 0.6, depth), CFrame.new(0, 0.3, 0), FLOOR)
 	put(
 		"BackWall",
@@ -87,7 +87,7 @@ function LabRoom.build(
 		{ canCollide = false }
 	)
 
-	-- Фасад с дверным проёмом.
+	-- Фасад із дверним отвором.
 	local leftWidth = (width - DOOR_WIDTH) / 2
 	for _, side in { -1, 1 } do
 		put(
@@ -111,7 +111,7 @@ function LabRoom.build(
 		{ canCollide = false }
 	)
 
-	-- Вывеска над дверью: аббревиатура факультета на двух языках.
+	-- Вивіска над дверима: абревіатура факультету двома мовами.
 	local board =
 		put("Sign", Vector3.new(12, 2.6, 0.5), CFrame.new(0, height - 2.4, frontZ - 0.35), DARK)
 	Build.text(
@@ -122,7 +122,7 @@ function LabRoom.build(
 		nil
 	)
 
-	-- Светильники на потолке.
+	-- Світильники на стелі.
 	local lit = 0
 	for _, z in { -depth / 4, depth / 4 } do
 		for _, x in { -width / 3, 0, width / 3 } do
@@ -140,7 +140,7 @@ function LabRoom.build(
 		end
 	end
 
-	-- Пульт у входа с подсказкой «Грати».
+	-- Пульт біля входу з підказкою «Грати».
 	local console = put(
 		"Console",
 		Vector3.new(4.5, 3.2, 2.2),

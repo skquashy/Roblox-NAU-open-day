@@ -1,8 +1,8 @@
 --!strict
--- Обстановка лаборатории ФКНТ для мини-игры «Кіберзахист»: в центре голографическая сеть (хаб и шесть узлов
--- с лучами), перед ней три большие кнопки (патч, блок IP, перезапуск) и табло статуса, у стен серверные
--- стойки и шлюз «Інтернет». Детали с именами Hub, Node1..6, Beam1..6, ButtonPatch/Block/Restart и
--- StatusLabel использует Missions/fknt: сервер ставит угрозы на узлы, красит лучи, читает нажатия кнопок.
+-- Обстановка лабораторії ФКНТ для мінігри «Кіберзахист»: у центрі голографічна мережа (хаб і шість вузлів
+-- з променями), перед нею три великі кнопки (патч, блок IP, перезапуск) і табло статусу, біля стін серверні
+-- стійки та шлюз «Інтернет». Деталі з іменами Hub, Node1..6, Beam1..6, ButtonPatch/Block/Restart і
+-- StatusLabel використовує Missions/fknt: сервер ставить загрози на вузли, фарбує промені, читає натискання кнопок.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -17,7 +17,7 @@ Fknt.NODE_COUNT = 6
 Fknt.RACK_COUNT = 4
 Fknt.BEAM_COLOR = Color3.fromRGB(70, 190, 255)
 
-local TABLE_Z = 3 -- центр голограммы относительно середины павильона
+local TABLE_Z = 3 -- центр голограми відносно середини павільйону
 local NODE_RING = 4.6
 local NODE_HEIGHT = 5.6
 local BUTTONS = {
@@ -62,7 +62,7 @@ function Fknt.dress(model: Model, origin: CFrame, size: Vector3)
 		return Build.part(model, partSize, origin * offset, color, opts)
 	end
 
-	-- Шлюз «Інтернет» у боковой стене: светящаяся рама (декорация, пакеты больше не летят).
+	-- Шлюз «Інтернет» у бічній стіні: світна рама (декорація, пакети більше не летять).
 	local gatewayX = width / 2 - 1.6
 	put(
 		"Gateway",
@@ -100,7 +100,7 @@ function Fknt.dress(model: Model, origin: CFrame, size: Vector3)
 		nil
 	)
 
-	-- Серверные стойки у задней стены (декор, лицом к центру комнаты).
+	-- Серверні стійки біля задньої стіни (декор, обличчям до центру кімнати).
 	local rackZ = depth / 2 - 2.4
 	for index = 1, Fknt.RACK_COUNT do
 		local x = (index - (Fknt.RACK_COUNT + 1) / 2) * 7 * 1.35
@@ -136,7 +136,7 @@ function Fknt.dress(model: Model, origin: CFrame, size: Vector3)
 		)
 	end
 
-	-- Стол-проектор и голографическая сеть: хаб в центре и шесть узлов по кольцу, от хаба к каждому луч.
+	-- Стіл-проєктор і голографічна мережа: хаб у центрі та шість вузлів по кільцю, від хаба до кожного промінь.
 	local hub = Vector3.new(0, NODE_HEIGHT, TABLE_Z)
 	Build.cylinder(
 		model,
@@ -193,7 +193,7 @@ function Fknt.dress(model: Model, origin: CFrame, size: Vector3)
 		)
 	end
 
-	-- Три кнопки перед голограммой, каждая со своей подсказкой «Взаємодіяти» (включается только в игре).
+	-- Три кнопки перед голограмою, кожна зі своєю підказкою «Взаємодіяти» (вмикається лише в грі).
 	for _, button in BUTTONS do
 		local part = put(
 			button.name,
@@ -222,7 +222,7 @@ function Fknt.dress(model: Model, origin: CFrame, size: Vector3)
 		prompt.Parent = part
 	end
 
-	-- Табло статуса над столом.
+	-- Табло статусу над столом.
 	local board = put(
 		"StatusBoard",
 		Vector3.new(16, 2.6, 0.3),
@@ -244,7 +244,7 @@ function Fknt.dress(model: Model, origin: CFrame, size: Vector3)
 	label.Text = bilingual("mg.fknt.title")
 	label.Parent = gui
 
-	-- Стол с монитором для вида.
+	-- Стіл із монітором для вигляду.
 	put(
 		"Desk",
 		Vector3.new(6, 1.6, 2.4),

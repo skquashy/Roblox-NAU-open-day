@@ -1,6 +1,6 @@
 --!strict
--- Точка входа сервера KAI ROBLOX. Двухфазный запуск:
--- сначала создаются ремоуты, затем init() у ВСЕХ систем, затем start() у всех.
+-- Точка входу сервера KAI ROBLOX. Двофазний запуск:
+-- спочатку створюються ремоути, потім init() у ВСІХ систем, потім start() у всіх.
 
 local NetServer = require(script.Lib.NetServer)
 
@@ -20,7 +20,7 @@ for _, child in Systems:GetChildren() do
 	end
 end
 
--- Ошибка в одной системе не должна останавливать остальные: логируем и идём дальше.
+-- Помилка в одній системі не повинна зупиняти решту: логуємо й ідемо далі.
 for name, system in loaded do
 	if typeof(system.init) == "function" then
 		local ok, err = pcall(system.init)

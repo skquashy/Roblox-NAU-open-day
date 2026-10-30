@@ -1,5 +1,5 @@
 --!strict
--- XP, монеты, уровни, исследование факультетов.
+-- XP, монети, рівні, дослідження факультетів.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -52,7 +52,7 @@ function Progress.addXp(player: Player, amount: number)
 	end
 end
 
--- true, если факультет исследован впервые.
+-- true, якщо факультет досліджено вперше.
 function Progress.markExplored(player: Player, facultyId: string): boolean
 	if not Faculties.byId[facultyId] then
 		return false

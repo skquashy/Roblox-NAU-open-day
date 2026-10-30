@@ -1,14 +1,14 @@
 --!strict
--- Типы, общие для клиента и сервера.
+-- Типи, спільні для клієнта та сервера.
 
 export type MinigameStat = { best: number, plays: number, passes: number }
 export type QuestState = { progress: number, done: boolean }
 
--- Профиль игрока, который хранится в DataStore (только JSON-совместимые значения).
+-- Профіль гравця, що зберігається в DataStore (лише JSON-сумісні значення).
 export type Profile = {
 	version: number,
-	lang: string, -- "uk" | "en" | "" (ещё не выбран)
-	archetype: string, -- "" = ещё не выбран
+	lang: string, -- "uk" | "en" | "" (ще не вибрано)
+	archetype: string, -- "" = ще не вибрано
 	xp: number,
 	coins: number,
 	explored: { [string]: boolean },
@@ -16,14 +16,14 @@ export type Profile = {
 	quests: { [string]: QuestState },
 	badges: { [string]: boolean },
 	inventory: { [string]: number },
-	hat: string, -- надетая косметика, "" = нет
+	hat: string, -- одягнена косметика, "" = немає
 	finaleDone: boolean,
 	createdAt: number,
 }
 
 export type QuestView = { id: string, progress: number, target: number, done: boolean }
 
--- То, что сервер отправляет клиенту для отрисовки интерфейса.
+-- Те, що сервер надсилає клієнту для відмальовування інтерфейсу.
 export type Snapshot = {
 	lang: string,
 	archetype: string,
@@ -39,7 +39,7 @@ export type Snapshot = {
 	finaleDone: boolean,
 }
 
--- Описание мини-игры (реализации лежат на сервере в src/server/Minigames).
+-- Опис мінігри (реалізації лежать на сервері в src/server/Minigames).
 export type Minigame = {
 	id: string,
 	kind: string, -- choice | multi | order | pairs | pick | toggle | allocate
@@ -50,8 +50,8 @@ export type Minigame = {
 	evaluate: (secret: any, answer: unknown) -> number,
 }
 
--- "Живая миссия": мини-игра в реальном времени, которую ведёт сервер (src/server/Missions).
--- Игрок действует в 3D-комнате (клики по объектам, зажатие подсказок), сервер сам считает результат.
+-- «Жива місія»: мінігра в реальному часі, яку веде сервер (src/server/Missions).
+-- Гравець діє в 3D-кімнаті (кліки по об'єктах, утримання підказок), сервер сам рахує результат.
 export type MissionContext = {
 	player: Player,
 	room: Model,
@@ -63,9 +63,9 @@ export type MissionContext = {
 
 export type MissionRun = {
 	tick: (dt: number) -> (),
-	score: () -> number, -- 0..1; вызывается один раз в конце
-	stop: () -> (), -- убрать все объекты миссии
-	isOver: (() -> boolean)?, -- миссия закончилась раньше времени (например, безопасность упала до нуля)
+	score: () -> number, -- 0..1; викликається один раз наприкінці
+	stop: () -> (), -- прибрати всі об'єкти місії
+	isOver: (() -> boolean)?, -- місія закінчилася раніше часу (наприклад, безпека впала до нуля)
 }
 
 export type Mission = {

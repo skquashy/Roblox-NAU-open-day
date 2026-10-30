@@ -1,5 +1,5 @@
 --!strict
--- Бейджи: внутриигровые (всегда) и настоящие бейджи Roblox (если задан ID в Config.ROBLOX_BADGE_IDS).
+-- Бейджі: внутрішньоігрові (завжди) і справжні бейджі Roblox (якщо задано ID у Config.ROBLOX_BADGE_IDS).
 
 local BadgeService = game:GetService("BadgeService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")

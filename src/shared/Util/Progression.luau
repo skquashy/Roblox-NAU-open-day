@@ -1,6 +1,6 @@
 --!strict
--- Кривая уровней. Чистая функция: используется и сервером (источник истины),
--- и клиентом (только для отображения).
+-- Крива рівнів. Чиста функція: використовується і сервером (джерело істини),
+-- і клієнтом (лише для відображення).
 
 local Config = require(script.Parent.Parent.Config)
 
@@ -10,7 +10,7 @@ function Progression.xpForNext(level: number): number
 	return Config.XP_BASE + Config.XP_STEP * (level - 1)
 end
 
--- Возвращает: уровень, XP внутри уровня, XP нужный до следующего.
+-- Повертає: рівень, XP всередині рівня, XP потрібний до наступного.
 function Progression.levelInfo(xp: number): (number, number, number)
 	local level = 1
 	local remaining = math.max(0, xp)

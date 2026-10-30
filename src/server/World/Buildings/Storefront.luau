@@ -1,7 +1,7 @@
 --!strict
--- Магазинчик на первом этаже жилого дома: цоколь, витрина с подсветкой и товарами за стеклом, дверь,
--- полосатый навес, вывеска с названием (Locale shop.<вид>) и мелочи перед входом (цветы, столик, ящики).
--- origin: центр фасада на земле, -Z смотрит на улицу. Магазины вымышленные, без реальных брендов.
+-- Магазинчик на першому поверсі житлового будинку: цоколь, вітрина з підсвіткою та товарами за склом, двері,
+-- смугастий навіс, вивіска з назвою (Locale shop.<вид>) та дрібниці перед входом (квіти, столик, ящики).
+-- origin: центр фасаду на землі, -Z дивиться на вулицю. Магазини вигадані, без реальних брендів.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -59,7 +59,7 @@ local STYLES: { [string]: Style } = {
 Storefront.kinds =
 	{ "grocery", "coffee", "pharmacy", "books", "pizza", "flowers", "sweets", "post" }
 
--- Бренды партнёров проекта по видам магазинов.
+-- Бренди партнерів проєкту за видами магазинів.
 local BRANDS: { [string]: { string } } = {
 	grocery = { "silpo", "atb", "novus" },
 	coffee = { "aroma", "lvivcroissants" },
@@ -230,7 +230,7 @@ local function buildProps(model: Model, origin: CFrame, width: number, kind: str
 	end
 end
 
--- Строит магазин вида kind шириной width.
+-- Будує магазин виду kind завширшки width.
 function Storefront.build(parent: Instance, origin: CFrame, width: number, kind: string)
 	local style = STYLES[kind] or STYLES.grocery
 	local model = Instance.new("Model")
@@ -250,7 +250,7 @@ function Storefront.build(parent: Instance, origin: CFrame, width: number, kind:
 		return Build.part(model, size, origin * offset, color, opts)
 	end
 
-	-- Цоколь и рамы витрины.
+	-- Цоколь і рами вітрини.
 	part(
 		"Base",
 		Vector3.new(width, 1.2, 0.6),
@@ -263,7 +263,7 @@ function Storefront.build(parent: Instance, origin: CFrame, width: number, kind:
 	local glassX = -width / 2 + 0.8 + glassWidth / 2
 	local doorX = width / 2 - 0.8 - doorWidth / 2
 
-	-- Витрина: тёплое стекло, за ним две полки с товарами.
+	-- Вітрина: тепле скло, за ним дві полиці з товарами.
 	part(
 		"ShopWindow",
 		Vector3.new(glassWidth, 5.4, 0.15),
@@ -301,7 +301,7 @@ function Storefront.build(parent: Instance, origin: CFrame, width: number, kind:
 	end
 	part("FrameTop", Vector3.new(width - 0.8, 0.4, 0.5), CFrame.new(0, 7.1, -1.35), FRAME)
 
-	-- Дверь со стеклом и ручкой.
+	-- Двері зі склом і ручкою.
 	part(
 		"Door",
 		Vector3.new(doorWidth, 6.2, 0.2),
@@ -324,7 +324,7 @@ function Storefront.build(parent: Instance, origin: CFrame, width: number, kind:
 		{ canCollide = false }
 	)
 
-	-- Вывеска и полосатый навес.
+	-- Вивіска та смугастий навіс.
 	local sign =
 		part("Sign", Vector3.new(width - 1, 2.2, 0.5), CFrame.new(0, 8.6, -0.4), style.sign)
 	local textColor = Color3.fromRGB(245, 240, 226)

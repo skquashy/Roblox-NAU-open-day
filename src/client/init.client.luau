@@ -1,10 +1,10 @@
 --!strict
--- Точка входа клиента KAI ROBLOX. Контроллеры только ОТОБРАЖАЮТ состояние,
--- присланное сервером, и отправляют запросы. Ничего важного клиент не решает.
+-- Точка входу клієнта KAI ROBLOX. Контролери лише ВІДОБРАЖАЮТЬ стан,
+-- надісланий сервером, і надсилають запити. Нічого важливого клієнт не вирішує.
 
 local NetClient = require(script.Lib.NetClient)
 
-NetClient.setup() -- один раз ждём папку с ремоутами; дальше NetClient.on не блокирует
+NetClient.setup() -- один раз чекаємо теку з ремоутами; далі NetClient.on не блокує
 
 local Controllers = script.Controllers
 
@@ -15,7 +15,7 @@ for _, child in Controllers:GetChildren() do
 	end
 end
 
--- init: подписки на ремоуты и построение интерфейса (без ожиданий).
+-- init: підписки на ремоути та побудова інтерфейсу (без очікувань).
 for _, controller in loaded do
 	if typeof(controller.init) == "function" then
 		controller.init()
@@ -28,7 +28,7 @@ for _, controller in loaded do
 	end
 end
 
--- Все подписки готовы: просим у сервера текущее состояние.
+-- Усі підписки готові: просимо в сервера поточний стан.
 NetClient.fire("RequestSnapshot")
 
 print("[KAI-Roblox] client started")

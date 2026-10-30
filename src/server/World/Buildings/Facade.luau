@@ -1,20 +1,20 @@
 --!strict
--- Общий помощник для фасадов: окна лентами по этажам и простенки на четырёх гранях здания.
--- origin: CFrame центра здания на земле, -Z смотрит на вход. Все детали без коллизии (оболочка стоит рядом).
+-- Спільний помічник для фасадів: вікна стрічками по поверхах і простінки на чотирьох гранях будівлі.
+-- origin: CFrame центра будівлі на землі, -Z дивиться на вхід. Усі деталі без колізії (оболонка стоїть поруч).
 
 local Build = require(script.Parent.Parent.Build)
 
 local Facade = {}
 
 export type Options = {
-	firstFloor: number, -- первый этаж с окнами (1 = первый)
-	floors: number, -- всего этажей
+	firstFloor: number, -- перший поверх із вікнами (1 = перший)
+	floors: number, -- усього поверхів
 	floorHeight: number,
 	glass: Color3,
 	pier: Color3,
-	columnWidth: number, -- шаг простенков в студах
-	glassHeight: number, -- высота ленты окон
-	skipBack: boolean?, -- не строить заднюю грань (если она совпадает с гранью соседнего объёма)
+	columnWidth: number, -- крок простінків у стадах
+	glassHeight: number, -- висота стрічки вікон
+	skipBack: boolean?, -- не будувати задню грань (якщо вона збігається з гранню сусіднього об'єму)
 }
 
 function Facade.rows(
@@ -36,7 +36,7 @@ function Facade.rows(
 		if options.skipBack and side.along == "x" and side.z > 0 then
 			continue
 		end
-		-- Направление наружу от грани (для смещения вперёд).
+		-- Напрямок назовні від грані (для зсуву вперед).
 		local outX, outZ = 0, 0
 		if side.along == "x" and side.z < 0 then
 			outZ = -1
@@ -61,7 +61,7 @@ function Facade.rows(
 				canCollide = false,
 			})
 		end
-		-- Простенки между окнами по всей высоте остеклённой части.
+		-- Простінки між вікнами по всій висоті засклених частин.
 		local pierBottom = (options.firstFloor - 1) * floorHeight
 		local pierHeight = options.floors * floorHeight - pierBottom
 		local pierY = pierBottom + pierHeight / 2

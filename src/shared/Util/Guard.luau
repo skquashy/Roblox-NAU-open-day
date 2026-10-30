@@ -1,6 +1,6 @@
 --!strict
--- Проверки входных данных от клиента. Любой аргумент RemoteEvent враждебен,
--- пока не проверен: тип -> диапазон -> права -> правдоподобность.
+-- Перевірки вхідних даних від клієнта. Будь-який аргумент RemoteEvent ворожий,
+-- поки не перевірений: тип -> діапазон -> права -> правдоподібність.
 
 local Guard = {}
 
@@ -21,7 +21,7 @@ function Guard.int(value: unknown, lo: number, hi: number): number?
 	if value ~= value then -- NaN
 		return nil
 	end
-	if value < lo or value > hi then -- заодно отсекает math.huge
+	if value < lo or value > hi then -- заодно відсікає math.huge
 		return nil
 	end
 	if value ~= math.floor(value) then
@@ -30,7 +30,7 @@ function Guard.int(value: unknown, lo: number, hi: number): number?
 	return value
 end
 
--- Возвращает таблицу, только если это чистый массив 1..n (n <= maxLen).
+-- Повертає таблицю, лише якщо це чистий масив 1..n (n <= maxLen).
 function Guard.arr(value: unknown, maxLen: number): { any }?
 	if typeof(value) ~= "table" then
 		return nil

@@ -1,6 +1,6 @@
 --!strict
--- Шесть образов со скриншота. Сейчас образ = цветной головной убор-заглушка.
--- Позже можно заменить на настоящие ассеты (HumanoidDescription) в Systems/Preferences.
+-- Шість образів зі скриншота. Наразі образ = кольоровий головний убір-заглушка.
+-- Пізніше можна замінити на справжні асети (HumanoidDescription) у Systems/Preferences.
 
 export type Archetype = {
 	id: string,

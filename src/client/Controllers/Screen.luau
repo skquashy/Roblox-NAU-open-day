@@ -1,6 +1,6 @@
 --!strict
--- Корневой интерфейс: масштабирование под экран (телефон/планшет/ПК), слои, модальные окна.
--- Всё остальное строится внутри Screen.root в "дизайн-пикселях" (минимум 1280x720).
+-- Кореневий інтерфейс: масштабування під екран (телефон/планшет/ПК), шари, модальні вікна.
+-- Усе інше будується всередині Screen.root у «дизайн-пікселях» (мінімум 1280x720).
 
 local Players = game:GetService("Players")
 
@@ -28,7 +28,7 @@ local root: Frame = UI.make("Frame", {
 })
 local uiScale: UIScale = UI.make("UIScale", { Parent = root })
 
--- Слои: HUD ниже, модальные окна выше, уведомления поверх всего.
+-- Шари: HUD нижче, модальні вікна вище, сповіщення поверх усього.
 local hudLayer: Frame = UI.make("Frame", {
 	Name = "HUD",
 	BackgroundTransparency = 1,
@@ -51,7 +51,7 @@ local toastLayer: Frame = UI.make("Frame", {
 	Parent = root,
 })
 
--- Затемнение за модальным окном; перехватывает нажатия, чтобы не кликать по миру.
+-- Затемнення за модальним вікном; перехоплює натискання, щоб не клікати по світу.
 local backdrop: TextButton = UI.make("TextButton", {
 	Name = "Backdrop",
 	Text = "",
@@ -84,7 +84,7 @@ Screen.toastLayer = toastLayer
 local currentModal: GuiObject? = nil
 local currentBlocking = false
 
--- Открывает модальное окно. blocking = true: пока оно открыто, другие окна открыть нельзя.
+-- Відкриває модальне вікно. blocking = true: поки воно відкрите, інші вікна відкрити не можна.
 function Screen.openModal(frame: GuiObject, blocking: boolean?)
 	if currentModal and currentModal ~= frame then
 		currentModal.Visible = false
@@ -117,14 +117,14 @@ function Screen.current(): GuiObject?
 	return currentModal
 end
 
--- Клик по затемнению закрывает обычное (не блокирующее) окно.
+-- Клік по затемненню закриває звичайне (не блокувальне) вікно.
 backdrop.Activated:Connect(function()
 	if currentModal and not currentBlocking then
 		Screen.closeModal()
 	end
 end)
 
--- Типовая рамка модального окна: заголовок + кнопка закрытия + область содержимого.
+-- Типова рамка модального вікна: заголовок + кнопка закриття + область вмісту.
 function Screen.makeWindow(titleKey: string, size: Vector2, onClose: (() -> ())?): (Frame, Frame)
 	local window = UI.frame({
 		Name = "Window",

@@ -1,7 +1,7 @@
 --!strict
--- Площадь перед корпусом 1: мощёная площадка и точка появления, мини-парк, памятник-самолёт Ан-26 на постаменте
--- (справа от входа, как на аэрофото), скамьи, фонари и деревья вдоль улиц.
--- Расстояние от корпуса 1 до проспекта Гузара всего около 69 стопов, поэтому площадь неглубокая.
+-- Площа перед корпусом 1: мощений майданчик і точка появи, міні-парк, пам'ятник-літак Ан-26 на постаменті
+-- (праворуч від входу, як на аерофото), лави, ліхтарі та дерева вздовж вулиць.
+-- Відстань від корпусу 1 до проспекту Гузара всього близько 69 стадів, тому площа неглибока.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -25,11 +25,11 @@ local Square = {}
 local PAVING = Color3.fromRGB(196, 200, 208)
 local PLAZA_WIDTH = 120
 local PLAZA_DEPTH = 32
-local PLAZA_OFFSET = 45 -- от фасада корпуса 1 до центра площади
-local MONUMENT_OFFSET_X = 100 -- вправо от оси входа
+local PLAZA_OFFSET = 45 -- від фасаду корпусу 1 до центру площі
+local MONUMENT_OFFSET_X = 100 -- праворуч від осі входу
 local MONUMENT_OFFSET_Z = 38
 local PLANE_SCALE = 2.2
-local TREE_MARGIN = 45 -- расстояние от зданий, ближе которого деревья не ставим
+local TREE_MARGIN = 45 -- відстань від будівель, ближче якої дерева не ставимо
 local TREE_SPACING = 60
 
 type Rect = { x: number, z: number, hx: number, hz: number }
@@ -62,7 +62,7 @@ local function buildMonument(parent: Instance, x: number, z: number)
 	)
 	Build.text(
 		pedestal,
-		Enum.NormalId.Back, -- надпись смотрит на площадь и проспект (на юг), а не на здание
+		Enum.NormalId.Back, -- напис дивиться на площу й проспект (на південь), а не на будівлю
 		Locale.translate("uk", "monument.plaque"),
 		Color3.fromRGB(240, 220, 190),
 		nil
@@ -78,7 +78,7 @@ local function buildMonument(parent: Instance, x: number, z: number)
 	end
 end
 
--- Деревья вдоль улиц, не ближе TREE_MARGIN к зданиям и не на площади с памятником.
+-- Дерева вздовж вулиць, не ближче TREE_MARGIN до будівель і не на площі з пам'ятником.
 local function buildTrees(parent: Instance, placed: { Campus.Placed }, reserved: { Rect })
 	local folder = Instance.new("Folder")
 	folder.Name = "Trees"
@@ -120,7 +120,7 @@ local function buildTrees(parent: Instance, placed: { Campus.Placed }, reserved:
 	end
 end
 
--- Строит площадь перед корпусом entrance и возвращает точку появления игроков.
+-- Будує площу перед корпусом entrance і повертає точку появи гравців.
 function Square.build(
 	parent: Instance,
 	placed: { Campus.Placed },
@@ -152,14 +152,14 @@ function Square.build(
 		)
 		table.insert(reserved, { x = monumentX, z = monumentZ, hx = 24, hz = 24 })
 
-		-- Мини-парк слева от корпуса 1, между ним и корпусом 11; дорожки ведут к площади и к входу корпуса 11.
+		-- Міні-парк ліворуч від корпусу 1, між ним і корпусом 11; доріжки ведуть до площі та до входу корпусу 11.
 		local connectNorth = Vector3.new(entrance.x - 86, 0, entrance.z - 120)
 		for _, item in placed do
 			if item.def.id == "c11" then
 				connectNorth = Vector3.new(item.x - 12, 0, item.z + item.hz + 18)
 			end
 		end
-		-- Киоск «Кулиничі» у юго-западного угла площади, фасад смотрит на юг, к дорожке парка.
+		-- Кіоск «Кулиничі» біля південно-західного кута площі, фасад дивиться на південь, до доріжки парку.
 		local kioskPosition = Vector3.new(entrance.x - 126, 0, entrance.z + 57)
 		local kioskRect =
 			Kiosk.build(parent, CFrame.lookAt(kioskPosition, kioskPosition + Vector3.new(0, 0, 1)))
@@ -181,7 +181,7 @@ function Square.build(
 		table.insert(reserved, stopRect)
 	end
 
-	-- Супермаркет «Фора» к востоку от корпуса 8: фасад на проспект, площадка перед входом и парковка западнее.
+	-- Супермаркет «Фора» на схід від корпусу 8: фасад на проспект, майданчик перед входом і парковка західніше.
 	for _, item in placed do
 		if item.def.id == "c8" then
 			local storeX, storeZ = item.x + 116, item.z + 75

@@ -1,15 +1,15 @@
 --!strict
--- Сохранение прогресса игроков.
--- Реализовано вручную, потому что в этом архиве нет внешних пакетов (Wally).
--- Если захотите, можно заменить на ProfileStore: публичный API модуля (get/save/Loaded/Changed) останется тем же.
+-- Збереження прогресу гравців.
+-- Реалізовано вручну, бо в цьому архіві немає зовнішніх пакетів (Wally).
+-- За бажання можна замінити на ProfileStore: публічний API модуля (get/save/Loaded/Changed) залишиться тим самим.
 --
--- Что здесь сделано (см. правила надёжных сохранений Roblox):
---  * все вызовы DataStore идут через pcall с повторами и экспоненциальной паузой;
---  * чтение-изменение-запись только через UpdateAsync;
---  * блокировка сессии (JobId + время): один сервер владеет данными игрока;
---  * сохранение: автосейв, выход игрока, BindToClose;
---  * если загрузка не удалась, игрок НЕ играет с пустым профилем (кик), иначе следующий сейв затёр бы реальные данные.
---    Исключение: Roblox Studio без доступа к API: тогда профиль временный и не сохраняется.
+-- Що тут зроблено (див. правила надійних збережень Roblox):
+-- * усі виклики DataStore ідуть через pcall з повторами й експоненційною паузою;
+-- * читання-зміна-запис лише через UpdateAsync;
+-- * блокування сесії (JobId + час): один сервер володіє даними гравця;
+-- * збереження: автосейв, вихід гравця, BindToClose;
+-- * якщо завантаження не вдалося, гравець НЕ грає з порожнім профілем (кік), інакше наступний сейв затер би реальні дані.
+-- Виняток: Roblox Studio без доступу до API: тоді профіль тимчасовий і не зберігається.
 
 local DataStoreService = game:GetService("DataStoreService")
 local Players = game:GetService("Players")
@@ -23,7 +23,7 @@ local Signal = require(Shared.Util.Signal)
 
 local PlayerData = {}
 
--- Fire(player, profile) после успешной загрузки. Changed(player) при любом изменении профиля.
+-- Fire(player, profile) після успішного завантаження. Changed(player) за будь-якої зміни профілю.
 PlayerData.Loaded = Signal.new()
 PlayerData.Changed = Signal.new()
 
@@ -69,8 +69,8 @@ local function newProfile(): Types.Profile
 	}
 end
 
--- Миграции схемы. При изменении формата данных: увеличьте Config.DATA_VERSION
--- и добавьте шаг MIGRATIONS[старая_версия] = function(data) ... return data end.
+-- Міграції схеми. Під час зміни формату даних: збільшіть Config.DATA_VERSION
+-- і додайте крок MIGRATIONS[стара_версія] = function(data) ... return data end.
 local MIGRATIONS: { [number]: (any) -> any } = {}
 
 local function migrate(data: any): Types.Profile
@@ -88,7 +88,7 @@ local function migrate(data: any): Types.Profile
 		data = step(data)
 		data.version += 1
 	end
-	-- Добавляем недостающие поля (на случай ручных правок или старых данных).
+	-- Додаємо відсутні поля (на випадок ручних правок або старих даних).
 	local defaults: any = newProfile()
 	for key, value in defaults do
 		if data[key] == nil then
@@ -127,7 +127,7 @@ local function isLockedByOther(old: any): boolean
 	return typeof(lock.time) == "number" and os.time() - lock.time < Config.LOCK_TIMEOUT
 end
 
--- Забирает блокировку и загружает профиль. Возвращает статус: "ok" | "locked" | "failed".
+-- Забирає блокування та завантажує профіль. Повертає статус: "ok" | "locked" | "failed".
 local function claim(player: Player): (string, Types.Profile?)
 	local key = keyFor(player.UserId)
 	local status = "failed"
@@ -138,7 +138,7 @@ local function claim(player: Player): (string, Types.Profile?)
 				locked = false
 				if old ~= nil and isLockedByOther(old) then
 					locked = true
-					return nil -- отмена записи
+					return nil -- скасування запису
 				end
 				local data: any = nil
 				if typeof(old) == "table" then
@@ -154,7 +154,7 @@ local function claim(player: Player): (string, Types.Profile?)
 		end
 		if locked then
 			status = "locked"
-			task.wait(3) -- возможно, старый сервер ещё освобождает данные
+			task.wait(3) -- можливо, старий сервер ще звільняє дані
 		elseif typeof(result) == "table" and typeof(result.data) == "table" then
 			return "ok", result.data
 		end
@@ -162,14 +162,14 @@ local function claim(player: Player): (string, Types.Profile?)
 	return status, nil
 end
 
--- Записывает профиль. release = true снимает блокировку (выход игрока/закрытие сервера).
+-- Записує профіль. release = true знімає блокування (вихід гравця/закриття сервера).
 local function write(userId: number, profile: Types.Profile, release: boolean): boolean
 	local snapshot = deepCopy(profile)
 	inflight += 1
 	local ok = withRetry(3, function()
 		return store:UpdateAsync(keyFor(userId), function(old: any)
 			if old ~= nil and isLockedByOther(old) then
-				return nil -- данные теперь у другого сервера: не перезаписываем
+				return nil -- дані тепер в іншого сервера: не перезаписуємо
 			end
 			local lock: any = nil
 			if not release then
@@ -190,7 +190,7 @@ function PlayerData.get(player: Player): Types.Profile?
 	return nil
 end
 
--- Вызывайте после любого изменения профиля: обновит интерфейс клиента.
+-- Викликайте після будь-якої зміни профілю: оновить інтерфейс клієнта.
 function PlayerData.markChanged(player: Player)
 	PlayerData.Changed:fire(player)
 end
@@ -205,7 +205,7 @@ end
 
 local function startAutosave(player: Player)
 	task.spawn(function()
-		task.wait(player.UserId % Config.AUTOSAVE_INTERVAL) -- разносим сейвы по времени
+		task.wait(player.UserId % Config.AUTOSAVE_INTERVAL) -- розносимо сейви в часі
 		while entries[player] do
 			PlayerData.save(player, false)
 			task.wait(Config.AUTOSAVE_INTERVAL)
@@ -217,7 +217,7 @@ local function loadPlayer(player: Player)
 	local status, profile = claim(player)
 
 	if player.Parent == nil then
-		-- Игрок вышел во время загрузки: сразу освобождаем блокировку.
+		-- Гравець вийшов під час завантаження: одразу звільняємо блокування.
 		if status == "ok" and profile then
 			write(player.UserId, profile, true)
 		end
@@ -267,7 +267,7 @@ function PlayerData.init()
 end
 
 function PlayerData.start()
-	-- Игроки, которые успели зайти до запуска системы (в Studio бывает).
+	-- Гравці, які встигли зайти до запуску системи (у Studio буває).
 	for _, player in Players:GetPlayers() do
 		task.spawn(loadPlayer, player)
 	end

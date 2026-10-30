@@ -1,5 +1,5 @@
 --!strict
--- Помощники для построения мира кодом (low-poly, в духе Roblox).
+-- Помічники для побудови світу кодом (low-poly, у дусі Roblox).
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -55,7 +55,7 @@ function Build.part(
 	return p
 end
 
--- Цилиндр. axis: "Y" (стоит), "Z" или "X" (лежит). Размер: диаметр и высота (длина вдоль оси).
+-- Циліндр. axis: "Y" (стоїть), "Z" або "X" (лежить). Розмір: діаметр і висота (довжина вздовж осі).
 function Build.cylinder(
 	parent: Instance,
 	diameter: number,
@@ -105,7 +105,7 @@ end
 
 local PIXELS_PER_STUD = 16
 
--- Надпись на грани детали (SurfaceGui). Фон прозрачный, если bg не задан.
+-- Напис на грані деталі (SurfaceGui). Тло прозоре, якщо bg не задано.
 function Build.text(
 	target: BasePart,
 	face: Enum.NormalId,
@@ -146,7 +146,7 @@ function Build.text(
 	padding.Parent = label
 end
 
--- Комната: пол, потолок и четыре стены. Пол: верх на высоте origin.Y. Возвращает модель.
+-- Кімната: підлога, стеля і чотири стіни. Підлога: верх на висоті origin.Y. Повертає модель.
 function Build.room(
 	parent: Instance,
 	origin: Vector3,
@@ -208,7 +208,7 @@ function Build.room(
 	return model
 end
 
--- Окна на фасаде. faceCFrame: центр грани, -Z смотрит наружу.
+-- Вікна на фасаді. faceCFrame: центр грані, -Z дивиться назовні.
 function Build.facade(
 	parent: Instance,
 	faceCFrame: CFrame,
@@ -239,7 +239,7 @@ function Build.facade(
 	end
 end
 
--- crown: цвет кроны (по умолчанию зелёный), для осеннего парка передаются жёлтый и оранжевый.
+-- crown: колір крони (за замовчуванням зелений), для осіннього парку передаються жовтий і помаранчевий.
 function Build.tree(parent: Instance, position: Vector3, scale: number, crown: Color3?)
 	local crownColor = crown or Color3.fromRGB(62, 140, 70)
 	Build.cylinder(
@@ -267,10 +267,10 @@ function Build.tree(parent: Instance, position: Vector3, scale: number, crown: C
 	)
 end
 
--- Парковая скамья: деревянные рейки на сиденье и спинке, тёмные металлические боковины с подлокотниками.
--- cframe: центр на земле, -Z смотрит туда, куда "смотрит" сидящий (спинка сзади, у +Z).
+-- Паркова лава: дерев'яні рейки на сидінні та спинці, темні металеві боковини з підлокітниками.
+-- cframe: центр на землі, -Z дивиться туди, куди «дивиться» той, хто сидить (спинка ззаду, біля +Z).
 function Build.bench(parent: Instance, cframe: CFrame)
-	local LEAN = math.rad(10) -- спинка и задние стойки откинуты назад (к +Z)
+	local LEAN = math.rad(10) -- спинка та задні стояки відхилені назад (до +Z)
 	local wood = Color3.fromRGB(151, 102, 62)
 	local metal = Color3.fromRGB(46, 50, 58)
 	local woodOptions: Options = { material = Enum.Material.Wood, name = "BenchSlat" }
@@ -317,7 +317,7 @@ function Build.bench(parent: Instance, cframe: CFrame)
 	end
 end
 
--- Урна: тёмный цилиндр с крышкой.
+-- Урна: темний циліндр із кришкою.
 function Build.bin(parent: Instance, position: Vector3)
 	Build.cylinder(
 		parent,
@@ -348,7 +348,7 @@ function Build.bin(parent: Instance, position: Vector3)
 	)
 end
 
--- Фонарь. lit = false: без источника света (для длинных рядов вдоль улиц, чтобы не нагружать освещение).
+-- Ліхтар. lit = false: без джерела світла (для довгих рядів уздовж вулиць, щоб не навантажувати освітлення).
 function Build.lamp(parent: Instance, position: Vector3, lit: boolean?)
 	Build.cylinder(
 		parent,

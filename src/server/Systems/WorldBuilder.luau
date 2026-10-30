@@ -1,6 +1,6 @@
 --!strict
--- Строит кампус при запуске сервера: освещение, земля, улицы, здания (World/CampusBuilder), точка появления.
--- Если построение упало, ставит плоскую землю и точку появления, чтобы игра всё равно запускалась.
+-- Будує кампус під час запуску сервера: освітлення, земля, вулиці, будівлі (World/CampusBuilder), точка появи.
+-- Якщо побудова впала, ставить плоску землю та точку появи, щоб гра все одно запускалася.
 
 local Lighting = game:GetService("Lighting")
 
@@ -11,9 +11,9 @@ local CampusBuilder = require(World.CampusBuilder)
 local WorldBuilder = {}
 
 local function setupLighting()
-	-- Послеполуденное тёплое солнце: длинные мягкие тени, золотистый свет на зданиях.
+	-- Післяобіднє тепле сонце: довгі м'які тіні, золотисте світло на будівлях.
 	Lighting.ClockTime = 16
-	-- Technology = Future задан в default.project.json (из скрипта его менять нельзя).
+	-- Technology = Future задано в default.project.json (зі скрипта його змінювати не можна).
 	Lighting.Brightness = 2.8
 	Lighting.Ambient = Color3.fromRGB(78, 84, 98)
 	Lighting.OutdoorAmbient = Color3.fromRGB(120, 128, 144)
@@ -21,7 +21,7 @@ local function setupLighting()
 	Lighting.EnvironmentDiffuseScale = 1
 	Lighting.EnvironmentSpecularScale = 1
 	if not Lighting:FindFirstChild("KAIAtmosphere") then
-		-- Дымка размывает далёкие дома: панорама города мягко тонет в воздухе.
+		-- Імла розмиває далекі будинки: панорама міста м'яко тоне в повітрі.
 		local atmosphere = Instance.new("Atmosphere")
 		atmosphere.Name = "KAIAtmosphere"
 		atmosphere.Density = 0.3
@@ -77,7 +77,7 @@ end
 
 function WorldBuilder.init()
 	setupLighting()
-	-- Шаблонный Baseplate лежит на той же высоте, что и наша земля: поверхности мигают (z-fighting).
+	-- Шаблонний Baseplate лежить на тій самій висоті, що й наша земля: поверхні блимають (z-fighting).
 	local baseplate = workspace:FindFirstChild("Baseplate")
 	if baseplate then
 		baseplate:Destroy()

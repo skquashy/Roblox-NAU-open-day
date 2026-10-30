@@ -1,9 +1,9 @@
 --!strict
--- Корпус 11 (Ангар): длинное четырёхэтажное здание бежево-кремового цвета с рядами окон, тёмными
--- вертикальными полосами остекления лестниц и большим залом на крыше с пологой серой металлической
--- крышей и зеленоватой лентой остекления. Внешний вид по аэрофото reference/korpus-11/aerial-0m18s.png.
--- Вход по центру передней стороны добавлен для игры (на фото он не виден).
--- Это только внешняя оболочка: интерьеры этажей добавляются в этапе 4.
+-- Корпус 11 (Ангар): довга чотириповерхова будівля бежево-кремового кольору з рядами вікон, темними
+-- вертикальними смугами скління сходів і великим залом на даху з пологим сірим металевим
+-- дахом і зеленуватою стрічкою скління. Зовнішній вигляд за аерофото reference/korpus-11/aerial-0m18s.png.
+-- Вхід по центру передньої сторони доданий для гри (на фото він не видний).
+-- Це лише зовнішня оболонка: інтер'єри поверхів додаються на етапі 4.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -30,7 +30,7 @@ local function decor(model: Instance, size: Vector3, cframe: CFrame, color: Colo
 	return Build.part(model, size, cframe, color, { name = name, canCollide = false })
 end
 
--- Вертикальные тёмные полосы остекления лестниц: по краям передней и задней сторон.
+-- Вертикальні темні смуги скління сходів: по краях передньої та задньої сторін.
 local function buildStairStrips(
 	model: Instance,
 	origin: CFrame,
@@ -60,7 +60,7 @@ local function buildStairStrips(
 	end
 end
 
--- Зал на крыше: стены, лента остекления по верху и пологая двускатная крыша.
+-- Зал на даху: стіни, стрічка скління вгорі та пологий двосхилий дах.
 local function buildHall(
 	model: Instance,
 	origin: CFrame,
@@ -108,7 +108,7 @@ local function buildHall(
 			}
 		)
 	end
-	-- Два ската навстречу друг другу, конёк вдоль длинной стороны.
+	-- Два скати назустріч одне одному, коник уздовж довгого боку.
 	local ridge = math.tan(SLOPE) * hallDepth / 2
 	local slabLength = hallDepth / 2 / math.cos(SLOPE) + 1
 	local slabY = topY + ridge / 2 + 0.6
@@ -153,7 +153,7 @@ local function buildEntrance(model: Instance, origin: CFrame, depth: number)
 	)
 end
 
--- Вентиляционные короба на плоской части крыши по обе стороны от зала.
+-- Вентиляційні короби на пласкій частині даху з обох боків від залу.
 local function buildVents(
 	model: Instance,
 	origin: CFrame,
@@ -176,7 +176,7 @@ local function buildVents(
 	end
 end
 
--- Строит корпус 11 в позиции item. Возвращает тело здания (к нему крепится подпись).
+-- Будує корпус 11 у позиції item. Повертає тіло будівлі (до нього кріпиться підпис).
 function Corpus11.build(parent: Instance, item: Campus.Placed): BasePart
 	local height = item.def.floors * Campus.FLOOR_HEIGHT
 	local model = Instance.new("Model")

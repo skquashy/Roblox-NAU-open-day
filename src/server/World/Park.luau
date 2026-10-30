@@ -1,8 +1,8 @@
 --!strict
--- Парк между корпусами 1 и 11 (как на аэрофото: осенние деревья, округлые кусты, дорожки, скамьи):
--- овальная дорожка с перекрёстком вокруг фонтана и клумбы, беседка, скамьи по кругу, фонари,
--- дорожки к площади и к корпусу 11. NPC появятся позже: места для них отмечены невидимыми
--- деталями в папке NpcSpots.
+-- Парк між корпусами 1 і 11 (як на аерофото: осінні дерева, округлі кущі, доріжки, лави):
+-- овальна доріжка з перехрестям навколо фонтану та клумби, альтанка, лави по колу, ліхтарі,
+-- доріжки до площі та до корпусу 11. NPC з'являться пізніше: місця для них позначено невидимими
+-- деталями в теці NpcSpots.
 
 local Build = require(script.Parent.Build)
 
@@ -10,15 +10,15 @@ local Park = {}
 
 export type Rect = { x: number, z: number, hx: number, hz: number }
 
-local LOOP_RX = 48 -- полуоси овала дорожки
+local LOOP_RX = 48 -- піввісі овалу доріжки
 local LOOP_RZ = 80
 local PATH_WIDTH = 6
 local PATH_COLOR = Color3.fromRGB(168, 164, 156)
-local REGION_HX = 62 -- половина размера парка, в пределах которого растут деревья и кусты
+local REGION_HX = 62 -- половина розміру парку, в межах якого ростуть дерева й кущі
 local REGION_HZ = 95
 local SEGMENTS = 36
-local FOUNTAIN_RADIUS = 11 -- дорожки-перекрёстки заканчиваются на этом расстоянии от центра
-local TREE_KEEP_OUT = 9 -- расстояние от дорожек, ближе которого деревья не ставим
+local FOUNTAIN_RADIUS = 11 -- доріжки-перехрестя закінчуються на цій відстані від центру
+local TREE_KEEP_OUT = 9 -- відстань від доріжок, ближче якої дерева не ставимо
 local AUTUMN = {
 	Color3.fromRGB(226, 178, 52),
 	Color3.fromRGB(214, 122, 40),
@@ -98,7 +98,7 @@ local function buildFountain(parent: Instance, center: Vector3)
 			canCollide = false,
 		})
 	Build.glow(jet, Color3.fromRGB(150, 215, 255), 0.6, 18)
-	-- Клумба кольцом: цвета КАІ (розовый акцент и светло-голубой).
+	-- Клумба кільцем: кольори КАІ (рожевий акцент і світло-блакитний).
 	for i = 0, 15 do
 		local angle = i / 16 * math.pi * 2
 		local color = Color3.fromRGB(232, 65, 142)
@@ -115,7 +115,7 @@ local function buildFountain(parent: Instance, center: Vector3)
 	end
 end
 
--- Беседка: деревянный пол, четыре столба, двухступенчатая крыша, две скамьи внутри.
+-- Альтанка: дерев'яна підлога, чотири стовпи, двоступеневий дах, дві лави всередині.
 local function buildGazebo(parent: Instance, center: Vector3)
 	local wood = Color3.fromRGB(170, 130, 90)
 	local roof = Color3.fromRGB(126, 72, 60)
@@ -155,8 +155,8 @@ local function buildGazebo(parent: Instance, center: Vector3)
 	Build.bench(parent, CFrame.lookAt(center + Vector3.new(0, 0.6, 5), center))
 end
 
--- Строит парк с центром в center. avoid: занятые прямоугольники (киоск), где не растут деревья.
--- Возвращает прямоугольник, который занят парком.
+-- Будує парк із центром у center. avoid: зайняті прямокутники (кіоск), де не ростуть дерева.
+-- Повертає прямокутник, який зайнято парком.
 function Park.build(
 	parent: Instance,
 	center: Vector3,
@@ -168,7 +168,7 @@ function Park.build(
 	folder.Name = "Park"
 	folder.Parent = parent
 
-	-- Овальная дорожка и точки на ней (для проверки расстояния до деревьев).
+	-- Овальна доріжка та точки на ній (для перевірки відстані до дерев).
 	local pathPoints: { Vector3 } = {}
 	for i = 0, SEGMENTS - 1 do
 		local a = loopPoint(center, i / SEGMENTS * math.pi * 2, 0)
@@ -176,7 +176,7 @@ function Park.build(
 		pathSegment(folder, a, b)
 		table.insert(pathPoints, a)
 	end
-	-- Перекрёсток: дорожка через парк с запада на восток, обходит фонтан.
+	-- Перехрестя: доріжка через парк із заходу на схід, обходить фонтан.
 	local westEnd = loopPoint(center, math.pi, 0)
 	local eastEnd = loopPoint(center, 0, 0)
 	local westInner = center + Vector3.new(-FOUNTAIN_RADIUS - 2, 0, 0)
@@ -188,7 +188,7 @@ function Park.build(
 		table.insert(pathPoints, westEnd:Lerp(westInner, t))
 		table.insert(pathPoints, eastInner:Lerp(eastEnd, t))
 	end
-	-- Дорожки от овала к площади (юго-восток) и к корпусу 11 (север).
+	-- Доріжки від овалу до площі (південний схід) і до корпусу 11 (північ).
 	local south = loopPoint(center, math.pi / 2, 0)
 	local southMid = Vector3.new((south.X + connectEast.X) / 2, 0, south.Z + 14)
 	pathSegment(folder, south, southMid)
@@ -202,8 +202,8 @@ function Park.build(
 	buildFountain(folder, center)
 	buildGazebo(folder, center + Vector3.new(0, 0, -45))
 
-	-- Скамьи по кругу лицом к фонтану, фонари между ними. Их позиции запоминаем: деревья и кусты не должны
-	-- вырастать внутри скамьи (скамья 7 студов в длину).
+	-- Лави по колу обличчям до фонтану, ліхтарі між ними. Їхні позиції запам'ятовуємо: дерева й кущі не повинні
+	-- виростати всередині лави (лава 7 стадів завдовжки).
 	local furniture: { Vector3 } = {}
 	for i = 0, 11 do
 		local angle = (i + 0.5) / 12 * math.pi * 2
@@ -218,7 +218,7 @@ function Park.build(
 		table.insert(furniture, position)
 	end
 
-	-- Осенние деревья и кусты: случайно, но каждый запуск одинаково.
+	-- Осінні дерева й кущі: випадково, але кожен запуск однаково.
 	local random = Random.new(1933)
 	local function isFree(position: Vector3, margin: number): boolean
 		for _, point in pathPoints do
@@ -239,7 +239,7 @@ function Park.build(
 				return false
 			end
 		end
-		-- Фонтан и беседка стоят на открытой площадке.
+		-- Фонтан і альтанка стоять на відкритому майданчику.
 		local flat = Vector3.new(position.X - center.X, 0, position.Z - center.Z)
 		if flat.Magnitude < 20 then
 			return false
@@ -282,7 +282,7 @@ function Park.build(
 		)
 	end)
 
-	-- Места для будущих NPC: невидимые метки у фонтана и у беседки.
+	-- Місця для майбутніх NPC: невидимі мітки біля фонтану та біля альтанки.
 	local spots = Instance.new("Folder")
 	spots.Name = "NpcSpots"
 	spots.Parent = folder

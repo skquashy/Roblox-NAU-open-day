@@ -1,7 +1,7 @@
 --!strict
--- Жилой дом: оконные ленты с простенками, балконы с остеклёнными ограждениями, парапет и надстройки на крыше,
--- цоколь. На первом этаже либо магазины (Storefront), либо подъезд с козырьком.
--- origin: центр дома на земле, -Z смотрит на улицу/кампус. Размеры и этажность задаются снаружи.
+-- Житловий будинок: віконні стрічки з простінками, балкони зі скляними огорожами, парапет і надбудови на даху,
+-- цоколь. На першому поверсі або магазини (Storefront), або під'їзд із козирком.
+-- origin: центр будинку на землі, -Z дивиться на вулицю/кампус. Розміри та поверховість задаються ззовні.
 
 local Build = require(script.Parent.Parent.Build)
 local Facade = require(script.Parent.Facade)
@@ -11,7 +11,7 @@ local Apartment = {}
 
 export type Options = {
 	wall: Color3,
-	shops: boolean, -- true: на первом этаже магазины по всей ширине фасада
+	shops: boolean, -- true: на першому поверсі магазини по всій ширині фасаду
 	random: Random,
 }
 
@@ -69,7 +69,7 @@ local function buildRoof(model: Model, origin: CFrame, width: number, depth: num
 	)
 end
 
--- Балконы на лицевой стороне: плита и остеклённое ограждение, начиная с третьего этажа.
+-- Балкони на лицьовому боці: плита й скляна огорожа, починаючи з третього поверху.
 local function buildBalconies(
 	model: Model,
 	origin: CFrame,
@@ -105,7 +105,7 @@ local function buildBalconies(
 	end
 end
 
--- Подъезд: дверь, козырёк, ступени.
+-- Під'їзд: двері, козирок, сходи.
 local function buildEntrance(model: Model, origin: CFrame, depth: number)
 	local frontZ = -depth / 2
 	Build.part(
@@ -131,7 +131,7 @@ local function buildEntrance(model: Model, origin: CFrame, depth: number)
 	)
 end
 
--- Строит дом шириной width, глубиной depth и floors этажей. Возвращает модель.
+-- Будує будинок завширшки width, завглибшки depth і floors поверхів. Повертає модель.
 function Apartment.build(
 	parent: Instance,
 	origin: CFrame,
@@ -152,7 +152,7 @@ function Apartment.build(
 		options.wall,
 		{ name = "Body", material = Enum.Material.Concrete }
 	)
-	-- Цоколь выступает чуть дальше стен по всему периметру.
+	-- Цоколь виступає трохи далі за стіни по всьому периметру.
 	Build.part(
 		model,
 		Vector3.new(width + 0.8, 2.4, depth + 0.8),
@@ -160,7 +160,7 @@ function Apartment.build(
 		STONE,
 		{ name = "Plinth", material = Enum.Material.Concrete }
 	)
-	-- Если магазинов нет, окна идут с первого этажа; иначе первый этаж отдан под витрины.
+	-- Якщо магазинів немає, вікна йдуть з першого поверху; інакше перший поверх віддано під вітрини.
 	local firstWindowFloor = 1
 	if options.shops then
 		firstWindowFloor = 2

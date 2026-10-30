@@ -1,7 +1,7 @@
 --!strict
--- Кампус КАІ кодом: земля, улицы, площадь, здания-заготовки (коробки с окнами и номером корпуса).
--- Корпуса 1, 8 и 11 потом заменяются детальными моделями (World/Buildings/*), остальные остаются блоками.
--- Положения берутся из Shared/Data/Campus (план-схема территории).
+-- Кампус КАІ кодом: земля, вулиці, площа, будівлі-заготовки (коробки з вікнами та номером корпусу).
+-- Корпуси 1, 8 і 11 потім замінюються детальними моделями (World/Buildings/*), решта лишаються блоками.
+-- Положення беруться з Shared/Data/Campus (план-схема території).
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -18,7 +18,7 @@ local Boundary = require(script.Parent.Boundary)
 local Skyline = require(script.Parent.Skyline)
 local Square = require(script.Parent.Square)
 
--- Корпуса с детальными моделями; остальные здания строятся блоками-заготовками.
+-- Корпуси з детальними моделями; інші будівлі будуються блоками-заготовками.
 local DETAILED: { [string]: (Instance, Campus.Placed) -> BasePart } = {
 	c1 = Corpus1.build,
 	c8 = Corpus8.build,
@@ -29,7 +29,7 @@ local CampusBuilder = {}
 
 export type Anchors = {
 	spawn: Vector3,
-	center: Vector3, -- центр кампуса: вокруг него строится городская панорама
+	center: Vector3, -- центр кампусу: навколо нього будується міська панорама
 }
 
 local GROUND_MARGIN = 360
@@ -72,7 +72,7 @@ local function buildRoads(parent: Instance)
 	folder.Parent = parent
 	for _, road in Campus.roads do
 		if road.id == "guzara" then
-			continue -- проспект с разметкой и трамваем строит Boulevard
+			continue -- проспект із розміткою та трамваєм будує Boulevard
 		end
 		local a = Campus.toWorld(road.a.X, road.a.Y)
 		local b = Campus.toWorld(road.b.X, road.b.Y)
@@ -111,7 +111,7 @@ local function buildLabel(parent: BasePart, item: Campus.Placed, height: number)
 	text.Parent = gui
 end
 
--- Здание-заготовка: коробка, плоская крыша, окна на стороне входа.
+-- Будівля-заготовка: коробка, плаский дах, вікна на стороні входу.
 local function buildBlock(parent: Instance, item: Campus.Placed)
 	local def = item.def
 	local height = def.floors * Campus.FLOOR_HEIGHT
@@ -136,7 +136,7 @@ local function buildBlock(parent: Instance, item: Campus.Placed)
 		def.roof or ROOF,
 		{ name = "Roof", material = Enum.Material.Metal }
 	)
-	-- lookAt направляет -Z на вход: передняя грань находится в -Z, окна рисуем на ней.
+	-- lookAt спрямовує -Z на вхід: передня грань знаходиться в -Z, вікна малюємо на ній.
 	local frontFace = base * CFrame.new(0, 0, -item.d / 2)
 	local cols = math.max(2, math.floor(item.w / 9))
 	Build.facade(model, frontFace, item.w - 4, height - 6, cols, def.floors)
@@ -162,10 +162,10 @@ function CampusBuilder.build(parent: Instance): Anchors
 		end
 	end
 
-	-- Площадь, памятник-самолёт и озеленение.
+	-- Площа, пам'ятник-літак і озеленіння.
 	local spawn = Square.build(parent, placed, entrance)
 
-	-- Центр кампуса по зданиям и городская панорама вокруг него вместо пустого горизонта.
+	-- Центр кампусу за будівлями та міська панорама навколо нього замість порожнього горизонту.
 	local sum = Vector3.zero
 	for _, item in placed do
 		sum += Vector3.new(item.x, 0, item.z)

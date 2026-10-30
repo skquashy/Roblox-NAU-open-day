@@ -1,9 +1,9 @@
 --!strict
--- Проспект Гузара: две проезжие части (по две полосы), посередине трамвайные пути с платформами и
--- павильонами остановки, разметка (пунктир, сплошные кромки, пешеходный переход), трамвай, автобус и машины.
--- Поперечный разрез проспекта, t от оси к северу (к кампусу):
---   31..14.6 проезжая часть | 14.6..9.6 платформа/газон | 9.6..-9.6 трамвайные пути | зеркально на юг.
--- Всё строится вдоль оси дороги (s) и поперёк (t), поэтому подходит для дороги под лёгким углом к оси X.
+-- Проспект Гузара: дві проїжджі частини (по дві смуги), посередині трамвайні колії з платформами та
+-- павільйонами зупинки, розмітка (пунктир, суцільні кромки, пішохідний перехід), трамвай, автобус і машини.
+-- Поперечний розріз проспекту, t від осі на північ (до кампусу):
+-- 31..14.6 проїжджа частина | 14.6..9.6 платформа/лавки | 9.6..-9.6 трамвайні колії | далі дзеркально.
+-- Усе будується вздовж осі дороги (s) і впоперек (t), тому підходить для дороги під легким кутом до осі X.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -21,7 +21,7 @@ export type Rect = { x: number, z: number, hx: number, hz: number }
 local FROM_X = -280
 local TO_X = 490
 local PLATFORM_LENGTH = 90
-local CAR_TOP = 0.4 -- верх асфальта
+local CAR_TOP = 0.4 -- верх асфальту
 local ASPHALT = Color3.fromRGB(58, 62, 70)
 local PAINT = Color3.fromRGB(236, 238, 240)
 local YELLOW = Color3.fromRGB(240, 200, 40)
@@ -31,7 +31,7 @@ local BLUE = Color3.fromRGB(34, 69, 151)
 local DARK = Color3.fromRGB(44, 48, 56)
 local STEEL = Color3.fromRGB(170, 174, 182)
 
--- Положение на дороге: s вдоль оси, t поперёк (плюс к северу).
+-- Положення на дорозі: s уздовж осі, t упоперек (плюс на північ).
 type Frame = { origin: Vector3, direction: Vector3, north: Vector3 }
 
 local function pointAt(frame: Frame, s: number, t: number, y: number): Vector3
@@ -39,7 +39,7 @@ local function pointAt(frame: Frame, s: number, t: number, y: number): Vector3
 	return Vector3.new(p.X, y, p.Z)
 end
 
--- Полоса: s от s0 до s1, t от t0 до t1, верхняя поверхность на высоте topY.
+-- Смуга: s від s0 до s1, t від t0 до t1, верхня поверхня на висоті topY.
 local function strip(
 	parent: Instance,
 	frame: Frame,
@@ -88,7 +88,7 @@ local function paint(
 	)
 end
 
--- Остановка: навес над платформой. t0 - середина платформы, side = 1 (север) или -1 (юг).
+-- Зупинка: навіс над платформою. t0 - середина платформи, side = 1 (північ) або -1 (південь).
 local function canopy(
 	parent: Instance,
 	frame: Frame,
@@ -122,7 +122,7 @@ local function canopy(
 			opts
 		)
 	end
-	-- Крыша, столбы через каждые 9 студов, стеклянная стенка со стороны проезжей части.
+	-- Дах, стовпи через кожні 9 стадів, скляна стінка з боку проїжджої частини.
 	place("Roof", 5, 0.5, length, 0, 0, 9, BLUE, nil)
 	local posts = math.floor(length / 9)
 	for i = 0, posts do
@@ -152,7 +152,7 @@ local function canopy(
 		Color3.fromRGB(160, 200, 225),
 		{ material = Enum.Material.Glass, transparency = 0.6, canCollide = false }
 	)
-	-- Лавки под навесом лицом к трамваю и урны по краям.
+	-- Лавки під навісом обличчям до трамвая та урни по краях.
 	local faceTo = -side
 	for i = 0, 2 do
 		local offset = -length / 2 + length * (i + 0.5) / 3
@@ -165,10 +165,10 @@ local function canopy(
 	end
 end
 
--- Контактная сеть: столбы на газоне между путями и проезжими частями, консоли над путями, контактный провод
--- на высоте токоприёмника трамвая и несущий провод выше с подвесами. Вдоль платформы столбов нет
--- (там навесы), провода там просто натянуты между столбами по краям остановки.
-local WIRE_HEIGHT = 16.3 -- верх токоприёмника трамвая стоит на 16.2
+-- Контактна мережа: стовпи на газоні між коліями та проїжджими частинами, консолі над коліями, контактний дріт
+-- на висоті струмоприймача трамвая і несучий дріт вище з підвісами. Уздовж платформи стовпів немає
+-- (там навіси), дроти там просто натягнуті між стовпами по краях зупинки.
+local WIRE_HEIGHT = 16.3 -- верх струмоприймача трамвая стоїть на 16.2
 local MESSENGER_HEIGHT = 18
 local POLE_SPACING = 36
 
@@ -213,7 +213,7 @@ local function overhead(
 	local s = 20
 	while s < length - 20 do
 		index += 1
-		-- Столбы по очереди на северной и южной стороне, каждый держит ближайший путь.
+		-- Стовпи по черзі на північному та південному боці, кожен тримає найближчу колію.
 		local side = 1
 		if index % 2 == 0 then
 			side = -1
@@ -230,7 +230,7 @@ local function overhead(
 				"Y",
 				{ name = "Pole" }
 			)
-			-- Консоль над путём и подвес контактного провода.
+			-- Консоль над колією та підвіс контактного дроту.
 			local armT = (poleT + side * 4.6) / 2
 			local arm = pointAt(frame, s, armT, MESSENGER_HEIGHT + 0.4)
 			Build.part(
@@ -256,7 +256,7 @@ local function overhead(
 	end
 end
 
--- Строит проспект; остановка и переход в точке stopX (мировая X, перед корпусом 1). Возвращает область остановки (для запрета мебели и деревьев).
+-- Будує проспект; зупинка та перехід у точці stopX (світова X, перед корпусом 1). Повертає область зупинки (для заборони меблів і дерев).
 function Boulevard.build(parent: Instance, stopX: number): Rect?
 	local road = Campus.roadById("guzara")
 	if not road then
@@ -272,7 +272,7 @@ function Boulevard.build(parent: Instance, stopX: number): Rect?
 	folder.Name = "Boulevard"
 	folder.Parent = parent
 
-	-- Асфальт двух проезжих частей и трамвайная насыпь.
+	-- Асфальт двох проїжджих частин і трамвайний насип.
 	for _, side in { 1, -1 } do
 		strip(
 			folder,
@@ -315,7 +315,7 @@ function Boulevard.build(parent: Instance, stopX: number): Rect?
 		Enum.Material.Pebble
 	)
 
-	-- Рельсы двух путей, расстояние между рельсами 3.2.
+	-- Рейки двох колій, відстань між рейками 3.2.
 	for _, track in { 4.6, -4.6 } do
 		for _, rail in { -1.6, 1.6 } do
 			strip(
@@ -334,7 +334,7 @@ function Boulevard.build(parent: Instance, stopX: number): Rect?
 		end
 	end
 
-	-- Разметка: пунктир по оси полос, сплошные линии вдоль бордюров.
+	-- Розмітка: пунктир по осі смуг, суцільні лінії вздовж бордюрів.
 	for _, side in { 1, -1 } do
 		local laneCenter = side * 22.8
 		local s = 0
@@ -354,7 +354,7 @@ function Boulevard.build(parent: Instance, stopX: number): Rect?
 		paint(folder, frame, 0, length, side * 15.2 - 0.15, side * 15.2 + 0.15, PAINT)
 	end
 
-	-- Пешеходный переход через оба проезда и путь, рядом с остановкой.
+	-- Пішохідний перехід через обидва проїзди й колію, поруч із зупинкою.
 	local crossS = stopS
 	for _, side in { 1, -1 } do
 		for i = 0, 5 do
@@ -375,13 +375,13 @@ function Boulevard.build(parent: Instance, stopX: number): Rect?
 		"TramCrossing",
 		Enum.Material.Pavement
 	)
-	-- Стоп-линии перед переходом.
+	-- Стоп-лінії перед переходом.
 	for _, side in { 1, -1 } do
 		paint(folder, frame, crossS - 9, crossS - 8, side * 15.6, side * 22, PAINT)
 		paint(folder, frame, crossS + 8, crossS + 9, side * 23, side * 30, PAINT)
 	end
 
-	-- Платформы по обе стороны путей с жёлтой кромкой и навесами.
+	-- Платформи з обох боків колій із жовтою кромкою та навісами.
 	local half = PLATFORM_LENGTH / 2
 	for _, side in { 1, -1 } do
 		strip(
@@ -414,7 +414,7 @@ function Boulevard.build(parent: Instance, stopX: number): Rect?
 	canopy(folder, frame, stopS - 22, 12.1, 1, 34)
 	canopy(folder, frame, stopS + 22, -12.1, -1, 34)
 
-	-- Трамвай на северном пути, автобус и несколько машин в потоке (все стоят).
+	-- Трамвай на північній колії, автобус і кілька машин у потоці (усі стоять).
 	local function onRoad(s: number, t: number, y: number): CFrame
 		local position = pointAt(frame, s, t, y)
 		return CFrame.lookAt(position, position + frame.direction)
@@ -430,12 +430,12 @@ function Boulevard.build(parent: Instance, stopX: number): Rect?
 		local t = slot[2]
 		local cf = onRoad(stopS + slot[1], t, CAR_TOP)
 		if t < 0 then
-			cf = cf * CFrame.Angles(0, math.pi, 0) -- встречная полоса: машины едут в другую сторону
+			cf = cf * CFrame.Angles(0, math.pi, 0) -- зустрічна смуга: машини їдуть в інший бік
 		end
 		Vehicles.car(folder, cf, color)
 	end
 
-	-- Название остановки на южной платформе.
+	-- Назва зупинки на південній платформі.
 	local signPosition = pointAt(frame, stopS + 40, -13, 0.6)
 	Build.cylinder(
 		folder,

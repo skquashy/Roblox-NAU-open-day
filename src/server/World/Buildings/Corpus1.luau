@@ -1,9 +1,9 @@
 --!strict
--- Корпус 1 (Центр вступника): длинное четырёхэтажное здание вдоль проспекта Любомира Гузара: протяжённый
--- корпус с синей скатной крышей, выступающий центральный павильон с колоннадой и два задних крыла
--- (левое короче, правое длиннее), как на план-схеме reference/campus-plan.webp. Цвета и крыша по аэрофото
--- reference/korpus-1/aerial-0m21s.png. Форма в плане приблизительная: аэрофото показывает только часть.
--- Это только внешняя оболочка: интерьеры этажей добавляются в этапе 4.
+-- Корпус 1 (Центр вступника): довга чотириповерхова будівля вздовж проспекту Любомира Гузара: протяжний
+-- корпус із синім скатним дахом, виступний центральний павільйон із колонадою та два задні крила
+-- (ліве коротше, праве довше), як на план-схемі reference/campus-plan.webp. Кольори та дах за аерофото
+-- reference/korpus-1/aerial-0m21s.png. Форма в плані приблизна: аерофото показує лише частину.
+-- Це лише зовнішня оболонка: інтер'єри поверхів додаються на етапі 4.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -19,14 +19,14 @@ local GLASS = Color3.fromRGB(72, 88, 112)
 local PIER = Color3.fromRGB(226, 218, 200)
 local COLUMN = Color3.fromRGB(240, 236, 226)
 local WING_WIDTH = 34
-local MAIN_DEPTH = 40 -- глубина протяжённого корпуса; центральный павильон глубже на item.d - MAIN_DEPTH
+local MAIN_DEPTH = 40 -- глибина протяжного корпусу; центральний павільйон глибший на item.d - MAIN_DEPTH
 local PAVILION_WIDTH = 52
-local LEFT_WING = { offset = 85, length = 44 } -- смещение от центра по локальной оси X (зритель видит слева)
+local LEFT_WING = { offset = 85, length = 44 } -- зсув від центру по локальній осі X (глядач бачить ліворуч)
 local RIGHT_WING = { offset = -80, length = 60 }
 local SLOPE = math.rad(16)
 local GABLE_STEPS = 5
 
--- Скатная крыша: два ската с коньком вдоль локальной оси X. cf: центр основания крыши.
+-- Скатний дах: два скати з коником уздовж локальної осі X. cf: центр основи даху.
 local function gableRoof(
 	model: Instance,
 	cf: CFrame,
@@ -47,7 +47,7 @@ local function gableRoof(
 			{ name = "Roof", material = Enum.Material.Metal }
 		)
 	end
-	-- Фронтоны на торцах ступенями (WedgePart повёрнуть вслепую нельзя, ступени надёжнее).
+	-- Фронтони на торцях сходинками (WedgePart повернути навмання не можна, сходинки надійніші).
 	local stepHeight = ridge / GABLE_STEPS
 	for _, endSign in { 1, -1 } do
 		for i = 0, GABLE_STEPS - 1 do
@@ -62,7 +62,7 @@ local function gableRoof(
 	end
 end
 
--- Центральный вход: площадка, шесть колонн и антаблемент над ними.
+-- Центральний вхід: майданчик, шість колон і антаблемент над ними.
 local function buildPortico(model: Instance, origin: CFrame, depth: number)
 	local frontZ = -depth / 2
 	local columnHeight = 3 * Campus.FLOOR_HEIGHT
@@ -127,7 +127,7 @@ local function buildWing(
 		columnWidth = 6,
 		glassHeight = 6,
 	})
-	-- Конёк крыла идёт вдоль его длины (ось Z), поэтому поворачиваем основание крыши на 90 градусов.
+	-- Коник крила йде вздовж його довжини (вісь Z), тому повертаємо основу даху на 90 градусів.
 	gableRoof(
 		model,
 		wingOrigin * CFrame.new(0, height, 0) * CFrame.Angles(0, math.rad(90), 0),
@@ -138,7 +138,7 @@ local function buildWing(
 	)
 end
 
--- Строит корпус 1 в позиции item. Возвращает тело здания (к нему крепится подпись).
+-- Будує корпус 1 у позиції item. Повертає тіло будівлі (до нього кріпиться підпис).
 function Corpus1.build(parent: Instance, item: Campus.Placed): BasePart
 	local height = item.def.floors * Campus.FLOOR_HEIGHT
 	local roofColor = item.def.roof or Color3.fromRGB(38, 124, 235)
@@ -160,7 +160,7 @@ function Corpus1.build(parent: Instance, item: Campus.Placed): BasePart
 		glassHeight = 6,
 	}
 
-	-- Протяжённый корпус: задняя грань на одной линии с павильоном, передняя отступает.
+	-- Протяжний корпус: задня грань на одній лінії з павільйоном, передня відступає.
 	local mainZ = item.d / 2 - MAIN_DEPTH / 2
 	local mainOrigin = origin * CFrame.new(0, 0, mainZ)
 	local body = Build.part(
@@ -180,7 +180,7 @@ function Corpus1.build(parent: Instance, item: Campus.Placed): BasePart
 		wallColor
 	)
 
-	-- Центральный павильон выступает вперёд; его крыша перпендикулярна основной.
+	-- Центральний павільйон виступає вперед; його дах перпендикулярний основному.
 	Build.part(
 		model,
 		Vector3.new(PAVILION_WIDTH, height, item.d),

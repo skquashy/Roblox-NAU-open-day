@@ -1,8 +1,8 @@
 --!strict
--- Самолёт-памятник Ан-26 (двухмоторный турбовинтовой высокоплан) в сине-жёлтой окраске, как на площади КАІ.
--- Собран из деталей Roblox, без внешних ассетов. Размеры в «метрах» реального самолёта (размах 29,2),
--- затем умножаются на scale. cframe: ось фюзеляжа в центре, нос смотрит в -Z.
--- Колёса стоят на GROUND_DROP * scale ниже оси фюзеляжа.
+-- Літак-пам'ятник Ан-26 (двомоторний турбогвинтовий високоплан) у синьо-жовтому забарвленні, як на площі КАІ.
+-- Зібрано з деталей Roblox, без зовнішніх асетів. Розміри в «метрах» реального літака (розмах 29,2),
+-- потім множаться на scale. cframe: вісь фюзеляжу в центрі, ніс дивиться в -Z.
+-- Колеса стоять на GROUND_DROP * scale нижче осі фюзеляжу.
 
 local Build = require(script.Parent.Build)
 
@@ -41,7 +41,7 @@ function An26.build(parent: Instance, cframe: CFrame, scale: number): Model
 		opts.name = name
 		return Build.part(model, size, cf, color, opts)
 	end
-	-- Цилиндр вдоль оси Z (фюзеляж, гондолы) и вдоль оси X (колёса)
+	-- Циліндр уздовж осі Z (фюзеляж, гондоли) і уздовж осі X (колеса)
 	local function zCyl(
 		name: string,
 		d: number,
@@ -77,7 +77,7 @@ function An26.build(parent: Instance, cframe: CFrame, scale: number): Model
 		return box(name, sz(length, d, d), at(x, y, z), color, opts)
 	end
 
-	-- Синяя и жёлтая полосы вдоль борта
+	-- Синя та жовта смуги вздовж борту
 	local bands = {
 		{ y = -0.5, h = 0.62, color = BLUE },
 		{ y = 0.06, h = 0.26, color = YELLOW },
@@ -97,7 +97,7 @@ function An26.build(parent: Instance, cframe: CFrame, scale: number): Model
 		end
 	end
 
-	-- Участок фюзеляжа из ступенчатых цилиндров. y1: подъём оси к концу участка. smooth: скругление (нос).
+	-- Ділянка фюзеляжу зі ступінчастих циліндрів. y1: підйом осі до кінця ділянки. smooth: закруглення (ніс).
 	local function section(
 		z0: number,
 		z1: number,
@@ -127,7 +127,7 @@ function An26.build(parent: Instance, cframe: CFrame, scale: number): Model
 		end
 	end
 
-	-- Фюзеляж: нос, центральная часть, хвостовой конус
+	-- Фюзеляж: ніс, центральна частина, хвостовий конус
 	section(-4.2, 8, FUSE_D, FUSE_D, 0, 1, false)
 	section(-4.2, -7.4, FUSE_D, 1.3, 0, 6, true)
 	section(8, 13.2, FUSE_D, 0.55, 0.55, 8, false)
@@ -152,7 +152,7 @@ function An26.build(parent: Instance, cframe: CFrame, scale: number): Model
 		canCollide = false,
 	})
 
-	-- Кабина экипажа: лобовые и боковые стёкла
+	-- Кабіна екіпажа: лобові та бокові скла
 	for _, sx in { -1, 1 } do
 		box(
 			"Windshield",
@@ -170,7 +170,7 @@ function An26.build(parent: Instance, cframe: CFrame, scale: number): Model
 		)
 	end
 
-	-- Иллюминаторы салона
+	-- Ілюмінатори салону
 	for i = 0, 5 do
 		for _, sx in { -1, 1 } do
 			box(
@@ -183,7 +183,7 @@ function An26.build(parent: Instance, cframe: CFrame, scale: number): Model
 		end
 	end
 
-	-- Крыло: центроплан и пять трапециевидных секций на каждую консоль (высокоплан)
+	-- Крило: центроплан і п'ять трапецієподібних секцій на кожну консоль (високоплан)
 	box("WingCenter", sz(6, 0.5, 4.6), at(0, 1.35, 0.2), WHITE)
 	local panels = 5
 	local panelWidth = 11.6 / panels
@@ -205,7 +205,7 @@ function An26.build(parent: Instance, cframe: CFrame, scale: number): Model
 		end
 	end
 
-	-- Двигатели: гондолы, воздухозаборники, обтекатели и четырёхлопастные винты
+	-- Двигуни: гондоли, повітрозабірники, обтічники та чотирилопатеві гвинти
 	for _, sx in { -1, 1 } do
 		local ex = sx * 5
 		zCyl("Nacelle", 1.25, 5.6, ex, 0.85, -1.6, WHITE)
@@ -237,7 +237,7 @@ function An26.build(parent: Instance, cframe: CFrame, scale: number): Model
 			)
 		end
 
-		-- Основная стойка шасси со сдвоенными колёсами
+		-- Основна стійка шасі зі здвоєними колесами
 		box("MainStrut", sz(0.28, 2.45, 0.28), at(ex, -1, -0.4), METAL)
 		box("MainAxle", sz(1.3, 0.2, 0.2), at(ex, -2.25, -0.4), METAL)
 		for _, off in { -0.4, 0.4 } do
@@ -246,13 +246,13 @@ function An26.build(parent: Instance, cframe: CFrame, scale: number): Model
 		end
 	end
 
-	-- Носовая стойка
+	-- Носова стійка
 	box("NoseStrut", sz(0.2, 1.2, 0.2), at(0, -1.9, -5.2), METAL)
 	for _, off in { -0.28, 0.28 } do
 		xCyl("NoseWheel", 0.9, 0.3, off, -2.45, -5.2, DARK)
 	end
 
-	-- Хвостовое оперение: киль с сине-жёлтой отделкой и стабилизатор
+	-- Хвостове оперення: кіль із синьо-жовтим оздобленням і стабілізатор
 	local fin = at(0, 3.1, 11.1) * CFrame.Angles(math.rad(16), 0, 0)
 	box("Fin", sz(0.4, 4.6, 3.4), fin, WHITE)
 	box(

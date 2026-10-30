@@ -19,8 +19,8 @@ jobs:
       - name: Lint
         run: selene src
 
-      # Форматирование не блокирует CI: один раз выполните `stylua src` локально,
-      # закоммитьте результат и уберите continue-on-error.
+      # Форматування не блокує CI: один раз виконайте `stylua src` локально,
+      # закомітьте результат і приберіть continue-on-error.
       - name: Check formatting
         run: stylua --check src
         continue-on-error: true

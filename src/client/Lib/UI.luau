@@ -1,6 +1,6 @@
 --!strict
--- Небольшая библиотека для сборки интерфейса из кода.
--- Дизайн-размеры считаются в "дизайн-пикселях": Screen масштабирует всё через UIScale.
+-- Невелика бібліотека для збирання інтерфейсу з коду.
+-- Дизайн-розміри рахуються в «дизайн-пікселях»: Screen масштабує все через UIScale.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
@@ -12,7 +12,7 @@ local UI = {}
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Theme = require(Shared:WaitForChild("Theme"))
 
--- Палитра интерфейса: фирменные цвета КАІ из Theme и несколько производных (светлее/темнее, золото монет).
+-- Палітра інтерфейсу: фірмові кольори КАІ з Theme та кілька похідних (світліше/темніше, золото монет).
 UI.theme = {
 	navy = Theme.colors.ink,
 	panel = Theme.colors.deep,
@@ -103,7 +103,7 @@ function UI.frame(props: { [string]: any }): Frame
 	)
 end
 
--- Текст. Если указан props.key, текст привязывается к локализации (props.args - параметры).
+-- Текст. Якщо вказано props.key, текст прив'язується до локалізації (props.args - параметри).
 function UI.label(props: { [string]: any }): TextLabel
 	local key = props.key
 	local args = props.args
@@ -124,7 +124,7 @@ function UI.label(props: { [string]: any }): TextLabel
 	return label
 end
 
--- Кнопка с анимацией нажатия. props.onClick - обработчик, props.key - ключ локализации текста.
+-- Кнопка з анімацією натискання. props.onClick - обробник, props.key - ключ локалізації тексту.
 function UI.button(props: { [string]: any }): TextButton
 	local key = props.key
 	local args = props.args
@@ -183,7 +183,7 @@ function UI.clear(container: Instance)
 	end
 end
 
--- Горизонтальная шкала прогресса. Возвращает (фон, функция установки доли 0..1).
+-- Горизонтальна шкала прогресу. Повертає (тло, функція встановлення частки 0..1).
 function UI.bar(props: { [string]: any }, fillColor: Color3?): (Frame, (fraction: number) -> ())
 	local background = UI.frame(merge({ BackgroundColor3 = UI.theme.navy }, props))
 	UI.corner(background, 8)

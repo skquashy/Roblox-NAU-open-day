@@ -1,5 +1,5 @@
 --!strict
--- Выбор образа при первом входе (и выбор языка на случай, если автоопределение ошиблось).
+-- Вибір образу під час першого входу (і вибір мови на випадок, якщо автовизначення помилилося).
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -48,7 +48,7 @@ local function build()
 		Parent = window,
 	})
 
-	-- Переключатель языка
+	-- Перемикач мови
 	local langRow = UI.frame({
 		BackgroundTransparency = 1,
 		AnchorPoint = Vector2.new(1, 0),

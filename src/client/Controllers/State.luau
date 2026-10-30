@@ -1,5 +1,5 @@
 --!strict
--- Хранит последнее состояние от сервера (Snapshot) и выбирает язык при первом входе.
+-- Зберігає останній стан від сервера (Snapshot) і вибирає мову під час першого входу.
 
 local LocalizationService = game:GetService("LocalizationService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -35,7 +35,7 @@ function State.init()
 		if snapshot.lang ~= "" then
 			Lang.set(snapshot.lang)
 		elseif not languageSent then
-			-- Первый вход: подбираем язык по настройкам Roblox и сохраняем выбор на сервере.
+			-- Перший вхід: добираємо мову за налаштуваннями Roblox і зберігаємо вибір на сервері.
 			languageSent = true
 			local detected = detectLanguage()
 			Lang.set(detected)

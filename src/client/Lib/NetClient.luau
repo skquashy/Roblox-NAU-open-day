@@ -1,5 +1,5 @@
 --!strict
--- Клиентская обёртка над RemoteEvent.
+-- Клієнтська обгортка над RemoteEvent.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 

@@ -1,8 +1,8 @@
 --!strict
--- Корпус 8: белая башня примерно в 16 этажей с синей надписью «КАІ» на фасаде, внизу невысокий
--- тёмно-розовый подиум, на крыше антенны. Внешний вид по фото reference/korpus-8/facade.jpg.
--- Надпись на фасаде «КАІ» (кириллица, І украинская), а не «НАУ» как на фото.
--- Это только внешняя оболочка: интерьеры этажей добавляются в этапе 4.
+-- Корпус 8: біла вежа приблизно на 16 поверхів із синім написом «КАІ» на фасаді, унизу невисокий
+-- темно-рожевий подіум, на даху антени. Зовнішній вигляд за фото reference/korpus-8/facade.jpg.
+-- Напис на фасаді «КАІ» (кирилиця, І українська), а не «НАУ», як на фото.
+-- Це лише зовнішня оболонка: інтер'єри поверхів додаються на етапі 4.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -15,7 +15,7 @@ local Facade = require(script.Parent.Facade)
 
 local Corpus8 = {}
 
--- Насколько подиум выступает вперёд за башню; по нему аллея и граффити находят стену и вход.
+-- Наскільки подіум виступає вперед за вежу; по ньому алея та графіті знаходять стіну й вхід.
 Corpus8.PODIUM_FRONT = 26
 
 local WHITE = Color3.fromRGB(240, 240, 238)
@@ -27,13 +27,13 @@ local PODIUM_FRONT = Corpus8.PODIUM_FRONT
 local PODIUM_SIDE = 22
 local PODIUM_BACK = 10
 
--- Буквы К, А, І: сетка 5x7, X = закрашенная клетка.
+-- Літери К, А, І: сітка 5x7, X = зафарбована клітинка.
 local LETTERS: { { string } } = {
 	{ "X...X", "X..X.", "X.X..", "XX...", "X.X..", "X..X.", "X...X" },
 	{ ".XXX.", "X...X", "X...X", "XXXXX", "X...X", "X...X", "X...X" },
 	{ ".XXX.", "..X..", "..X..", "..X..", "..X..", "..X..", ".XXX." },
 }
-local LETTER_GAP = 1.5 -- промежуток между буквами в ширинах клетки
+local LETTER_GAP = 1.5 -- проміжок між літерами в ширинах клітинки
 local LETTER_CELL_HEIGHT = 7
 
 local function decor(model: Instance, size: Vector3, cframe: CFrame, color: Color3, name: string)
@@ -58,7 +58,7 @@ local function buildFacades(
 	})
 end
 
--- Синие буквы «КАІ» на передней грани, между 7 и 13 этажами.
+-- Сині літери «КАІ» на передній грані, між 7 і 13 поверхами.
 local function buildLetters(
 	model: Instance,
 	origin: CFrame,
@@ -83,7 +83,7 @@ local function buildLetters(
 						runEnd += 1
 					end
 					local runWidth = (runEnd - col + 1) * cellWidth
-					-- Локальная ось X смотрит влево от зрителя перед фасадом: зеркалим, чтобы читалось слева направо.
+					-- Локальна вісь X дивиться ліворуч від глядача перед фасадом: дзеркалимо, щоб читалося зліва направо.
 					local x = -(letterX + (col - 1) * cellWidth + runWidth / 2)
 					decor(
 						model,
@@ -120,7 +120,7 @@ local function buildPodium(model: Instance, origin: CFrame, width: number, depth
 		Color3.fromRGB(110, 70, 64),
 		{ name = "PodiumRoof" }
 	)
-	-- Остекление и вход на передней стороне подиума.
+	-- Скління та вхід на передній стороні подіуму.
 	local frontZ = -(depth / 2 + PODIUM_FRONT)
 	decor(
 		model,
@@ -176,7 +176,7 @@ local function buildRoof(
 	end
 end
 
--- Строит корпус 8 в позиции item. Возвращает тело башни (к нему крепится подпись).
+-- Будує корпус 8 у позиції item. Повертає тіло вежі (до нього кріпиться підпис).
 function Corpus8.build(parent: Instance, item: Campus.Placed): BasePart
 	local height = item.def.floors * Campus.FLOOR_HEIGHT
 	local model = Instance.new("Model")

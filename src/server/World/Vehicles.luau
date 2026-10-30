@@ -1,6 +1,6 @@
 --!strict
--- Неподвижные машины для декора: легковая, автобус и трамвай. cframe: центр на земле, -Z смотрит вперёд.
--- Это статичные модели: они нигде не едут. Номерных знаков и реальных марок нет.
+-- Нерухомі машини для декору: легкова, автобус і трамвай. cframe: центр на землі, -Z дивиться вперед.
+-- Це статичні моделі: вони ніде не їдуть. Номерних знаків і реальних марок немає.
 
 local Build = require(script.Parent.Build)
 
@@ -37,8 +37,8 @@ local function maker(model: Model, cframe: CFrame)
 	end
 end
 
--- Колесо: цилиндр, ось которого направлена поперёк машины (локальная ось X), поэтому берём полный cframe
--- машины, а не только позицию: иначе у машин, стоящих вдоль дороги, колёса оказывались бы повёрнуты боком.
+-- Колесо: циліндр, вісь якого спрямована впоперек машини (локальна вісь X), тому беремо повний cframe
+-- машини, а не лише позицію: інакше в машин, що стоять уздовж дороги, колеса опинялися б повернуті боком.
 local function wheel(
 	model: Model,
 	cframe: CFrame,
@@ -54,7 +54,7 @@ local function wheel(
 	})
 end
 
--- Легковая машина: кузов, салон со стёклами, фары, колёса.
+-- Легкова машина: кузов, салон зі скельцями, фари, колеса.
 function Vehicles.car(parent: Instance, cframe: CFrame, color: Color3): Model
 	local model = Instance.new("Model")
 	model.Name = "Car"
@@ -106,7 +106,7 @@ function Vehicles.car(parent: Instance, cframe: CFrame, color: Color3): Model
 	return model
 end
 
--- Автобус: жёлтый кузов, лента окон, двери, фары.
+-- Автобус: жовтий кузов, стрічка вікон, двері, фари.
 function Vehicles.bus(parent: Instance, cframe: CFrame): Model
 	local model = Instance.new("Model")
 	model.Name = "Bus"
@@ -166,7 +166,7 @@ function Vehicles.bus(parent: Instance, cframe: CFrame): Model
 	return model
 end
 
--- Трамвай: длина 52, ширина 9, бело-синий, с пантографом.
+-- Трамвай: довжина 52, ширина 9, біло-синій, із пантографом.
 function Vehicles.tram(parent: Instance, cframe: CFrame): Model
 	local model = Instance.new("Model")
 	model.Name = "Tram"

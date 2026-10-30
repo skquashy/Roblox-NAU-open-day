@@ -1,5 +1,5 @@
 --!strict
--- Язык интерфейса, выбор образа и визуальная часть (головной убор-заглушка).
+-- Мова інтерфейсу, вибір образу та візуальна частина (головний убір-заглушка).
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -62,7 +62,7 @@ local function applyHat(player: Player)
 	hat.Massless = true
 	local lift = head.Size.Y / 2 + size.Y / 2 - 0.15
 	if shape == Enum.PartType.Cylinder then
-		-- Цилиндр в Roblox лежит вдоль оси X: поворачиваем, чтобы стоял вертикально.
+		-- Циліндр у Roblox лежить уздовж осі X: повертаємо, щоб стояв вертикально.
 		hat.CFrame = head.CFrame
 			* CFrame.new(0, head.Size.Y / 2 + size.X / 2 - 0.15, 0)
 			* CFrame.Angles(0, 0, math.rad(90))
@@ -76,7 +76,7 @@ local function applyHat(player: Player)
 	hat.Parent = character
 end
 
--- Вызывайте после смены образа или косметики.
+-- Викликайте після зміни образу або косметики.
 function Preferences.refresh(player: Player)
 	applyHat(player)
 	PlayerData.markChanged(player)
@@ -110,14 +110,14 @@ end
 
 local function watch(player: Player)
 	player.CharacterAdded:Connect(function()
-		-- Ждём профиль (если ещё грузится), затем надеваем.
+		-- Чекаємо профіль (якщо ще вантажиться), потім одягаємо.
 		task.spawn(function()
 			local waited = 0
 			while not PlayerData.get(player) and waited < 30 and player.Parent do
 				task.wait(0.25)
 				waited += 0.25
 			end
-			task.wait(0.3) -- дать персонажу собраться
+			task.wait(0.3) -- дати персонажу зібратися
 			applyHat(player)
 		end)
 	end)

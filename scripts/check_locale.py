@@ -17,7 +17,7 @@ for k in uk:
     if k in en and placeholders(uk[k]) != placeholders(en[k]):
         print("разные параметры:", k); ok = False
 
-# ключи, использованные в коде
+# ключі, використані в коді
 used = set()
 for path in (root / "src").rglob("*.luau"):
     if "Locale" in path.parts: continue
@@ -28,7 +28,7 @@ for k in sorted(used):
     if k not in uk and not k.endswith((".", "_")):
         print("ключ используется, но не определён:", k); ok = False
 
-# динамические ключи: id факультетов берём из Data/Faculties.luau
+# динамічні ключі: id факультетів беремо з Data/Faculties.luau
 faculties = re.findall(r'id = "(\w+)"', (root / "src/shared/Data/Faculties.luau").read_text(encoding="utf-8"))
 if len(faculties) != 9:
     print("в Data/Faculties.luau ожидается 9 факультетов, найдено", len(faculties)); ok = False

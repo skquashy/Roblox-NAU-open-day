@@ -1,7 +1,7 @@
 --!strict
--- Постоянный интерфейс в цветах КАІ: слева сверху монеты и уровень с XP-шкалой, по центру прогресс по
--- факультетам, слева трекер квестов, справа снизу кнопки окон (квесты, бейджи, инвентарь, настройки).
--- Всё только показывает состояние от сервера (Snapshot); ничего не считает.
+-- Постійний інтерфейс у кольорах КАІ: ліворуч угорі монети та рівень зі шкалою XP, по центру прогрес за
+-- факультетами, ліворуч трекер квестів, праворуч унизу кнопки вікон (квести, бейджі, інвентар, налаштування).
+-- Усе лише показує стан від сервера (Snapshot); нічого не рахує.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -31,7 +31,7 @@ local facultiesLabel: TextLabel
 local setFaculties: (number) -> ()
 local questList: Frame
 
--- Плашка с тёмным фоном, скруглением и обводкой цвета КАІ.
+-- Плашка з темним тлом, закругленням і обводкою кольору КАІ.
 local function pill(parent: Instance, position: UDim2, size: UDim2, anchor: Vector2?): Frame
 	local frame = UI.frame({
 		BackgroundColor3 = theme.navy,
@@ -117,7 +117,7 @@ local function render(snapshot: Types.Snapshot)
 end
 
 local function buildTopLeft(parent: Frame)
-	-- Монеты: золотая монета и число.
+	-- Монети: золота монета і число.
 	local coins = pill(parent, UDim2.fromOffset(16, 14), UDim2.fromOffset(180, 44))
 	local coin = UI.frame({
 		BackgroundColor3 = theme.gold,
@@ -145,7 +145,7 @@ local function buildTopLeft(parent: Frame)
 		Parent = coins,
 	})
 
-	-- Уровень и XP-шкала.
+	-- Рівень і шкала XP.
 	local level = pill(parent, UDim2.fromOffset(16, 66), UDim2.fromOffset(300, 56))
 	local badge = UI.frame({
 		BackgroundColor3 = theme.pink,
@@ -177,7 +177,7 @@ local function buildTopLeft(parent: Frame)
 	xpBar.BackgroundColor3 = theme.panel
 	setXp = setBar
 
-	-- Трекер квестов.
+	-- Трекер квестів.
 	local quests = pill(parent, UDim2.fromOffset(16, 134), UDim2.fromOffset(300, 220))
 	UI.label({
 		key = "ui.quests",
