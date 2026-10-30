@@ -4,6 +4,21 @@
 
 return {
 	-- General interface
+	["ui.level"] = "Level {1}",
+	["ui.faculties"] = "Faculties {1}/{2}",
+	["ui.quests"] = "Quests",
+	["ui.badges"] = "Badges",
+	["ui.inventory"] = "Inventory",
+	["ui.settings"] = "Settings",
+	["ui.done"] = "Done",
+	["ui.equip"] = "Equip",
+	["ui.unequip"] = "Unequip",
+	["ui.buy"] = "Buy for {1}",
+	["ui.empty"] = "Nothing here yet",
+	["ui.cosmetics"] = "Cosmetics",
+	["ui.quest_items"] = "Items",
+	["arch.title"] = "Choose your look",
+	["arch.hint"] = "Your look only changes appearance. You can change it later.",
 	["ui.close"] = "Close",
 	["ui.language"] = "Language",
 
