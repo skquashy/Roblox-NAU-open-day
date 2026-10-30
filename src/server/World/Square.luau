@@ -14,6 +14,7 @@ local An26 = require(script.Parent.An26)
 local Kiosk = require(script.Parent.Kiosk)
 local Graffiti = require(script.Parent.Graffiti)
 local Park = require(script.Parent.Park)
+local Pavilions = require(script.Parent.Labs.Pavilions)
 local Sidewalks = require(script.Parent.Sidewalks)
 local Boulevard = require(script.Parent.Boulevard)
 local Greenery = require(script.Parent.Greenery)
@@ -205,6 +206,9 @@ function Square.build(
 	end
 	Sidewalks.build(parent, placed, reserved)
 	Graffiti.build(parent, placed)
+	for _, rect in Pavilions.build(parent, placed) do
+		table.insert(reserved, rect)
+	end
 	Greenery.build(parent, placed, reserved)
 	buildTrees(parent, placed, reserved)
 	return spawn

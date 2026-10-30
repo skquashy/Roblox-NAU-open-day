@@ -29,6 +29,9 @@ return table.freeze({
 	INTERACT_DISTANCE = 22,
 	PANEL_DISTANCE = 45,
 
+	ROOM_TAG = "KAI_Lab", -- тег CollectionService на модели лаборатории мини-игры (ставит сервер)
+	ROOM_LEAVE_MARGIN = 10, -- на сколько студов выйти за радиус лаборатории, чтобы игра отменилась
+
 	-- Финал
 	FINALE_REQUIRED = 9, -- сколько факультетов нужно исследовать (по числу в Data/Faculties)
 	FINALE_XP = 200,
