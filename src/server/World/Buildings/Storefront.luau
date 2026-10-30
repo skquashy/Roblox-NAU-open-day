@@ -59,7 +59,7 @@ local STYLES: { [string]: Style } = {
 Storefront.kinds =
 	{ "grocery", "coffee", "pharmacy", "books", "pizza", "flowers", "sweets", "post" }
 
--- Бренды партнёров проекта по видам магазинов (названия по договорённости с заказчиком).
+-- Бренды партнёров проекта по видам магазинов.
 local BRANDS: { [string]: { string } } = {
 	grocery = { "silpo", "atb", "novus" },
 	coffee = { "aroma", "lvivcroissants" },
