@@ -202,15 +202,20 @@ function Park.build(
 	buildFountain(folder, center)
 	buildGazebo(folder, center + Vector3.new(0, 0, -45))
 
-	-- Скамьи по кругу лицом к фонтану, фонари между ними.
+	-- Скамьи по кругу лицом к фонтану, фонари между ними. Их позиции запоминаем: деревья и кусты не должны
+	-- вырастать внутри скамьи (скамья 7 студов в длину).
+	local furniture: { Vector3 } = {}
 	for i = 0, 11 do
 		local angle = (i + 0.5) / 12 * math.pi * 2
 		local position = loopPoint(center, angle, 6)
 		Build.bench(folder, CFrame.lookAt(position, Vector3.new(center.X, 0, center.Z)))
+		table.insert(furniture, position)
 	end
 	for i = 0, 5 do
 		local angle = i / 6 * math.pi * 2 + math.pi / 6
-		Build.lamp(folder, loopPoint(center, angle, 4))
+		local position = loopPoint(center, angle, 4)
+		Build.lamp(folder, position)
+		table.insert(furniture, position)
 	end
 
 	-- Осенние деревья и кусты: случайно, но каждый запуск одинаково.
@@ -218,6 +223,11 @@ function Park.build(
 	local function isFree(position: Vector3, margin: number): boolean
 		for _, point in pathPoints do
 			if (Vector3.new(point.X, 0, point.Z) - position).Magnitude < margin then
+				return false
+			end
+		end
+		for _, point in furniture do
+			if (Vector3.new(point.X, 0, point.Z) - position).Magnitude < margin + 4.5 then
 				return false
 			end
 		end

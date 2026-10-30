@@ -17,7 +17,7 @@ local Pavilions = {}
 
 export type Rect = { x: number, z: number, hx: number, hz: number }
 
-local SIZE = Vector3.new(36, 12, 28) -- ширина (вдоль стены двери), высота, глубина
+local SIZE = Vector3.new(36, 15, 28) -- ширина (вдоль стены двери), высота, глубина
 local PATH_WIDTH = 8
 
 -- Строит павильоны и возвращает занятые ими области (чтобы деревья и мебель не вставали на них).

@@ -113,7 +113,7 @@ function LabRoom.build(
 
 	-- Вывеска над дверью: аббревиатура факультета на двух языках.
 	local board =
-		put("Sign", Vector3.new(12, 2.6, 0.5), CFrame.new(0, height - 2.6, frontZ - 0.35), DARK)
+		put("Sign", Vector3.new(12, 2.6, 0.5), CFrame.new(0, height - 2.4, frontZ - 0.35), DARK)
 	Build.text(
 		board,
 		Enum.NormalId.Front,

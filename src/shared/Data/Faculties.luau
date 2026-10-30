@@ -14,7 +14,7 @@ local list: { Faculty } = {
 	{ id = "gmf", color = Color3.fromRGB(232, 65, 142), minigame = "gmf" },
 	{ id = "faet", color = Color3.fromRGB(0, 170, 200), minigame = "faet" },
 	{ id = "fabd", color = Color3.fromRGB(230, 130, 60), minigame = "fabd" },
-	{ id = "fknt", color = Color3.fromRGB(150, 90, 230), minigame = "fknt" },
+	{ id = "fknt", color = Color3.fromRGB(226, 48, 52), minigame = "fknt" },
 	{ id = "fmfm", color = Color3.fromRGB(240, 170, 30), minigame = "fmfm" },
 	{ id = "fnz", color = Color3.fromRGB(70, 180, 90), minigame = "fnz" },
 	{ id = "fpmv", color = Color3.fromRGB(170, 70, 70), minigame = "fpmv" },
