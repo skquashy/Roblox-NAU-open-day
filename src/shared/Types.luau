@@ -65,6 +65,7 @@ export type MissionRun = {
 	tick: (dt: number) -> (),
 	score: () -> number, -- 0..1; вызывается один раз в конце
 	stop: () -> (), -- убрать все объекты миссии
+	isOver: (() -> boolean)?, -- миссия закончилась раньше времени (например, безопасность упала до нуля)
 }
 
 export type Mission = {

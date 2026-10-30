@@ -43,6 +43,8 @@ for brand in ['silpo', 'atb', 'novus', 'aroma', 'lvivcroissants', 'podorozhnyk',
 for i in (1, 2, 3):
     dyn.append("mg.fknt.safe%d" % i)
     dyn.append("mg.fknt.bad%d" % i)
+for key in ("btn.patch", "btn.block", "btn.restart", "threat.virus", "threat.attack", "threat.crash"):
+    dyn.append("mg.fknt." + key)
 for k in dyn:
     if k not in uk: print("не хватает динамического ключа:", k); ok = False
 

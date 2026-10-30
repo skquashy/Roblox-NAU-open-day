@@ -257,7 +257,9 @@ function Minigames.start()
 				and (not distance or distance > radius + Config.ROOM_LEAVE_MARGIN)
 			then
 				finish(player, true)
-			elseif elapsed >= session.duration then
+			elseif
+				elapsed >= session.duration or (session.run.isOver ~= nil and session.run.isOver())
+			then
 				finish(player, false)
 			else
 				session.run.tick(dt)

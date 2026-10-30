@@ -18,7 +18,6 @@ local State = require(script.Parent.State)
 local Minigame = {}
 
 local theme = UI.theme
-local RACKS = 4
 
 local promptWindow: Frame
 local promptContent: Frame
@@ -29,7 +28,7 @@ local resultReward: TextLabel
 local missionFrame: Frame
 local timeLabel: TextLabel
 local statsLabel: TextLabel
-local rackBars: { (number) -> () } = {}
+local setSecurity: (number) -> ()
 
 local function showPrompt(facultyId: string)
 	if not Screen.canOpen() then
@@ -143,22 +142,20 @@ local function buildMissionPanel(parent: Frame)
 		end,
 		Parent = missionFrame,
 	})
-	-- Здоровье стоек: четыре шкалы в ряд.
-	for index = 1, RACKS do
-		local bar, setBar = UI.bar({
-			Position = UDim2.fromOffset(14 + (index - 1) * 104, 72),
-			Size = UDim2.fromOffset(96, 16),
-			Parent = missionFrame,
-		}, theme.good)
-		bar.BackgroundColor3 = theme.panel
-		setBar(1)
-		rackBars[index] = setBar
-	end
+	-- Уровень безопасности: одна широкая шкала.
+	local bar, setBar = UI.bar({
+		Position = UDim2.fromOffset(14, 74),
+		Size = UDim2.new(1, -28, 0, 18),
+		Parent = missionFrame,
+	}, theme.good)
+	bar.BackgroundColor3 = theme.panel
+	setBar(1)
+	setSecurity = setBar
 	UI.label({
-		Text = "1   2   3   4",
+		key = "mg.fknt.security",
 		TextSize = 14,
 		TextColor3 = theme.muted,
-		Position = UDim2.fromOffset(14, 94),
+		Position = UDim2.fromOffset(14, 96),
 		Size = UDim2.new(1, -28, 0, 22),
 		Parent = missionFrame,
 	})
@@ -172,18 +169,13 @@ local function onMissionState(state: { [string]: any })
 	missionFrame.Visible = true
 	timeLabel.Text = Lang.t("mg.time", { tostring(state.timeLeft or 0) })
 	statsLabel.Text = Lang.t("mg.stats", {
-		tostring(state.blocked or 0),
-		tostring(state.leaked or 0),
-		tostring(state.falseBlocks or 0),
+		tostring(state.solved or 0),
+		tostring(state.wrong or 0),
+		tostring(state.missed or 0),
 	})
-	local racks = state.racks
-	if typeof(racks) == "table" then
-		for index, setBar in rackBars do
-			local hp = (racks :: { number })[index]
-			if typeof(hp) == "number" then
-				setBar(hp / 100)
-			end
-		end
+	local security = state.security
+	if typeof(security) == "number" then
+		setSecurity(security / 100)
 	end
 end
 

@@ -1,9 +1,10 @@
 --!strict
--- Живая миссия ФКНТ «Кіберзахист». Из шлюза в лаборатории летят пакеты к четырём серверным стойкам:
--- безопасные (зелёные) надо пропустить, шкідливі (красные) заблокировать кликом. Пропущенный шкідливий
--- пакет снижает здоровье стойки. Всё считает сервер: клик ловит ClickDetector на сервере, клиент ничего
--- не присылает. Результат = среднее здоровье стоек минус штраф за блокировку безопасных пакетов.
--- Тексты пакетов берутся из Locale (mg.fknt.safe1..3, mg.fknt.bad1..3) на языке игрока.
+-- Живая миссия ФКНТ «Кіберзахист». В центре лаборатории голографическая сеть из шести узлов. На узлах
+-- появляются угрозы трёх видов: вірус (лечится кнопкой «Встановити патч»), атака з IP («Заблокувати IP»)
+-- и збій системи («Перезапустити»). У каждой угрозы таймер. Игрок жмёт нужную кнопку перед голограммой:
+-- кнопка решает самую срочную угрозу своего вида. Неверное нажатие, пропущенная угроза снижают безопасность.
+-- Результат = безопасность в конце (0..1). Нажатия принимает сервер через ProximityPrompt, клиент
+-- ничего не присылает. Названия угроз и табло берутся из Locale на языке игрока.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -17,34 +18,51 @@ local Fknt = require(Server.World.Labs.Fknt)
 
 local Mission = {}
 
-type Rack = {
-	body: BasePart,
-	fill: BasePart,
-	lamp: BasePart,
-	hp: number,
-	flash: number,
+type ThreatDef = { id: string, action: string, nameKey: string, icon: string, color: Color3 }
+
+type Threat = {
+	def: ThreatDef,
+	node: number,
+	total: number,
+	left: number,
+	gui: BillboardGui,
+	bar: Frame,
 }
 
-type Packet = {
-	part: Part,
-	target: number,
-	malicious: boolean,
-	direction: Vector3,
-	remaining: number,
+local THREATS: { ThreatDef } = {
+	{
+		id = "virus",
+		action = "patch",
+		nameKey = "mg.fknt.threat.virus",
+		icon = "☠",
+		color = Color3.fromRGB(232, 65, 80),
+	},
+	{
+		id = "attack",
+		action = "block",
+		nameKey = "mg.fknt.threat.attack",
+		icon = "⛔",
+		color = Color3.fromRGB(240, 140, 40),
+	},
+	{
+		id = "crash",
+		action = "restart",
+		nameKey = "mg.fknt.threat.crash",
+		icon = "⚠",
+		color = Color3.fromRGB(240, 210, 60),
+	},
 }
 
-local SPAWN_INTERVAL = { 1.7, 1.25, 0.95 }
-local SPEED = { 6, 8, 10 } -- студов в секунду
 local DURATION = { 70, 85, 100 }
-local MALICIOUS_SHARE = { 0.45, 0.5, 0.55 }
-local DAMAGE = { 18, 22, 26 }
-local FALSE_BLOCK_PENALTY = 0.04
+local SPAWN_INTERVAL = { 5.5, 4.2, 3.2 } -- пауза между новыми угрозами
+local THREAT_TIME = { 11, 8.5, 7 } -- сколько секунд до того, как угроза будет пропущена
+local MAX_ACTIVE = { 1, 2, 3 }
+local MISSED_PENALTY = 15
+local WRONG_PENALTY = 4
+local SOLVED_BONUS = 3
+local BUTTON_COOLDOWN = 0.3
 local PUSH_INTERVAL = 0.25
-local SAFE_COLOR = Color3.fromRGB(80, 220, 120)
-local BAD_COLOR = Color3.fromRGB(232, 65, 80)
-local FLY_HEIGHT = 5
-local SAFE_KEYS = { "mg.fknt.safe1", "mg.fknt.safe2", "mg.fknt.safe3" }
-local BAD_KEYS = { "mg.fknt.bad1", "mg.fknt.bad2", "mg.fknt.bad3" }
+local NODE_COLOR = Color3.fromRGB(150, 220, 255)
 
 Mission.id = "fknt"
 Mission.titleKey = "mg.fknt.title"
@@ -62,73 +80,91 @@ local function languageOf(player: Player): string
 	return "uk"
 end
 
-local function setBar(rack: Rack)
-	local fraction = math.clamp(rack.hp / 100, 0, 1)
-	local width = math.max(Fknt.BAR_WIDTH * fraction, 0.05)
-	local color = SAFE_COLOR
-	if fraction < 0.35 then
-		color = BAD_COLOR
-	elseif fraction < 0.7 then
-		color = Color3.fromRGB(240, 190, 40)
+local function findPart(room: Model, name: string): BasePart?
+	local part = room:FindFirstChild(name)
+	if part and part:IsA("BasePart") then
+		return part
 	end
-	local origin = rack.fill.CFrame
-	-- Шкала сжимается к левому краю стойки: сдвигаем центр так, чтобы левая граница осталась на месте.
-	local oldWidth = rack.fill.Size.X
-	rack.fill.Size = Vector3.new(width, rack.fill.Size.Y, rack.fill.Size.Z)
-	rack.fill.CFrame = origin * CFrame.new((oldWidth - width) / 2, 0, 0)
-	rack.fill.Color = color
-	rack.lamp.Color = color
+	return nil
 end
 
-local function collectRacks(room: Model): { Rack }?
-	local racks: { Rack } = {}
-	for index = 1, Fknt.RACK_COUNT do
-		local body = room:FindFirstChild("Rack" .. index)
-		local fill = room:FindFirstChild("Rack" .. index .. "Fill")
-		local lamp = room:FindFirstChild("Rack" .. index .. "Lamp")
-		if
-			not (
-				body
-				and body:IsA("BasePart")
-				and fill
-				and fill:IsA("BasePart")
-				and lamp
-				and lamp:IsA("BasePart")
-			)
-		then
-			return nil
-		end
-		table.insert(racks, { body = body, fill = fill, lamp = lamp, hp = 100, flash = 0 })
-	end
-	return racks
+-- Облачко над узлом: иконка, название угрозы и полоска оставшегося времени.
+local function makeBillboard(node: BasePart, def: ThreatDef, lang: string): (BillboardGui, Frame)
+	local gui = Instance.new("BillboardGui")
+	gui.Name = "Threat"
+	gui.Size = UDim2.fromOffset(190, 110)
+	gui.StudsOffset = Vector3.new(0, 3.2, 0)
+	gui.AlwaysOnTop = true
+	gui.MaxDistance = 80
+	gui.Parent = node
+	local icon = Instance.new("TextLabel")
+	icon.BackgroundTransparency = 1
+	icon.Size = UDim2.new(1, 0, 0, 56)
+	icon.TextScaled = true
+	icon.TextColor3 = def.color
+	icon.Text = def.icon
+	icon.Parent = gui
+	local name = Instance.new("TextLabel")
+	name.BackgroundTransparency = 1
+	name.Position = UDim2.fromOffset(0, 54)
+	name.Size = UDim2.new(1, 0, 0, 26)
+	name.TextScaled = true
+	name.TextColor3 = Color3.new(1, 1, 1)
+	name.TextStrokeTransparency = 0.3
+	name.Text = Locale.translate(lang, def.nameKey)
+	name.Parent = gui
+	local back = Instance.new("Frame")
+	back.BackgroundColor3 = Color3.fromRGB(12, 20, 40)
+	back.Position = UDim2.fromOffset(15, 86)
+	back.Size = UDim2.new(1, -30, 0, 10)
+	back.BorderSizePixel = 0
+	back.Parent = gui
+	local bar = Instance.new("Frame")
+	bar.BackgroundColor3 = def.color
+	bar.Size = UDim2.fromScale(1, 1)
+	bar.BorderSizePixel = 0
+	bar.Parent = back
+	return gui, bar
 end
 
 function Mission.start(ctx: Types.MissionContext): Types.MissionRun?
-	local gateway = ctx.room:FindFirstChild("Gateway")
-	local racks = collectRacks(ctx.room)
-	if not (gateway and gateway:IsA("BasePart")) or not racks then
-		warn("[fknt] в лаборатории не хватает шлюза или стоек")
-		return nil
+	local room = ctx.room
+	local hub = findPart(room, "Hub")
+	local nodes: { BasePart } = {}
+	local beams: { BasePart } = {}
+	for index = 1, Fknt.NODE_COUNT do
+		local node = findPart(room, "Node" .. index)
+		local beam = findPart(room, "Beam" .. index)
+		if not node or not beam then
+			warn("[fknt] в лаборатории не хватает узлов сети")
+			return nil
+		end
+		table.insert(nodes, node)
+		table.insert(beams, beam)
 	end
+	local buttons: { [string]: ProximityPrompt } = {}
+	for _, name in { "ButtonPatch", "ButtonBlock", "ButtonRestart" } do
+		local part = findPart(room, name)
+		local prompt = part and part:FindFirstChildWhichIsA("ProximityPrompt")
+		local action = part and part:GetAttribute("Action")
+		if not part or not prompt or typeof(action) ~= "string" then
+			warn("[fknt] в лаборатории не хватает кнопок")
+			return nil
+		end
+		buttons[action] = prompt
+	end
+	local statusLabel = room:FindFirstChild("StatusLabel", true)
+
 	local lang = languageOf(ctx.player)
 	local difficulty = ctx.difficulty
-	local folder = Instance.new("Folder")
-	folder.Name = "MissionPackets"
-	folder.Parent = ctx.room
-
-	local packets: { Packet } = {}
-	local spawnTimer = 0.8
+	local active: { Threat } = {}
+	local security = 100
+	local solved, wrong, missed = 0, 0, 0
+	local spawnTimer = 2
 	local pushTimer = 0
-	local blocked, leaked, falseBlocks, delivered = 0, 0, 0, 0
+	local lastPress = 0
 	local stopped = false
-
-	local function removePacket(packet: Packet)
-		local index = table.find(packets, packet)
-		if index then
-			table.remove(packets, index)
-		end
-		packet.part:Destroy()
-	end
+	local connections: { RBXScriptConnection } = {}
 
 	local function burst(position: Vector3, color: Color3)
 		local flash = Instance.new("Part")
@@ -137,107 +173,118 @@ function Mission.start(ctx: Types.MissionContext): Types.MissionRun?
 		flash.Shape = Enum.PartType.Ball
 		flash.Material = Enum.Material.Neon
 		flash.Color = color
-		flash.Size = Vector3.new(2, 2, 2)
+		flash.Size = Vector3.new(2.4, 2.4, 2.4)
 		flash.Position = position
-		flash.Parent = folder
-		task.delay(0.25, function()
+		flash.Parent = room
+		task.delay(0.3, function()
 			flash:Destroy()
 		end)
 	end
 
-	local function spawnPacket()
-		local malicious = ctx.rng:NextNumber() < (MALICIOUS_SHARE[difficulty] or 0.45)
-		local target = ctx.rng:NextInteger(1, #racks)
-		local rack = racks[target]
-		local part = Instance.new("Part")
-		part.Size = Vector3.new(2.6, 1.6, 1.6)
-		part.Anchored = true
-		part.CanCollide = false
-		part.Material = Enum.Material.Neon
-		part.Color = malicious and BAD_COLOR or SAFE_COLOR
-		local startPosition = gateway.Position + Vector3.new(0, 0, ctx.rng:NextNumber(-1.5, 1.5))
-		startPosition = Vector3.new(
-			startPosition.X,
-			gateway.Position.Y - 0.6 + ctx.rng:NextNumber(-0.6, 0.6),
-			startPosition.Z
-		)
-		part.Position = startPosition
-		part.Name = "Packet"
-
-		local goal = rack.body.Position + rack.body.CFrame.LookVector * 3.2
-		goal = Vector3.new(goal.X, FLY_HEIGHT, goal.Z)
-		local offset = goal - startPosition
-		local gui = Instance.new("BillboardGui")
-		gui.Size = UDim2.fromOffset(110, 34)
-		gui.StudsOffset = Vector3.new(0, 2, 0)
-		gui.AlwaysOnTop = true
-		gui.MaxDistance = 90
-		gui.Parent = part
-		local label = Instance.new("TextLabel")
-		label.Size = UDim2.fromScale(1, 1)
-		label.BackgroundTransparency = 1
-		label.TextScaled = true
-		label.TextColor3 = Color3.new(1, 1, 1)
-		label.TextStrokeTransparency = 0.3
-		local keys = SAFE_KEYS
-		if malicious then
-			keys = BAD_KEYS
-		end
-		label.Text = Locale.translate(lang, keys[ctx.rng:NextInteger(1, #keys)])
-		label.Parent = gui
-
-		local detector = Instance.new("ClickDetector")
-		detector.MaxActivationDistance = 80
-		detector.Parent = part
-		part.Parent = folder
-
-		local packet: Packet = {
-			part = part,
-			target = target,
-			malicious = malicious,
-			direction = offset.Unit,
-			remaining = offset.Magnitude,
-		}
-		table.insert(packets, packet)
-		detector.MouseClick:Connect(function(clicker: Player)
-			if stopped or clicker ~= ctx.player or table.find(packets, packet) == nil then
-				return
-			end
-			if packet.malicious then
-				blocked += 1
-				burst(part.Position, SAFE_COLOR)
-			else
-				falseBlocks += 1
-				burst(part.Position, BAD_COLOR)
-			end
-			removePacket(packet)
-		end)
+	local function resetNode(index: number)
+		beams[index].Color = Fknt.BEAM_COLOR
+		beams[index].Transparency = 0
+		nodes[index].Color = NODE_COLOR
 	end
 
-	local function averageHealth(): number
-		local total = 0
-		for _, rack in racks do
-			total += rack.hp
+	local function removeThreat(threat: Threat)
+		local index = table.find(active, threat)
+		if index then
+			table.remove(active, index)
 		end
-		return total / (#racks * 100)
+		threat.gui:Destroy()
+		resetNode(threat.node)
+	end
+
+	local function updateStatus()
+		if statusLabel and statusLabel:IsA("TextLabel") then
+			statusLabel.Text =
+				Locale.translate(lang, "mg.fknt.status", { tostring(math.floor(security + 0.5)) })
+			local color = Color3.fromRGB(80, 220, 120)
+			if security < 35 then
+				color = Color3.fromRGB(232, 65, 80)
+			elseif security < 70 then
+				color = Color3.fromRGB(240, 190, 40)
+			end
+			statusLabel.TextColor3 = color
+		end
 	end
 
 	local function pushState()
-		local hp: { number } = {}
-		for _, rack in racks do
-			table.insert(hp, rack.hp)
-		end
+		updateStatus()
 		ctx.push({
-			racks = hp,
-			blocked = blocked,
-			leaked = leaked,
-			falseBlocks = falseBlocks,
-			delivered = delivered,
+			security = security,
+			solved = solved,
+			wrong = wrong,
+			missed = missed,
+			threats = #active,
 		})
 	end
 
-	for _, rack in racks do
-		setBar(rack)
+	local function spawnThreat()
+		local taken: { [number]: boolean } = {}
+		for _, threat in active do
+			taken[threat.node] = true
+		end
+		local free: { number } = {}
+		for index = 1, #nodes do
+			if not taken[index] then
+				table.insert(free, index)
+			end
+		end
+		if #free == 0 then
+			return
+		end
+		local node = free[ctx.rng:NextInteger(1, #free)]
+		local def = THREATS[ctx.rng:NextInteger(1, #THREATS)]
+		local total = THREAT_TIME[difficulty] or THREAT_TIME[1]
+		local gui, bar = makeBillboard(nodes[node], def, lang)
+		beams[node].Color = def.color
+		nodes[node].Color = def.color
+		table.insert(
+			active,
+			{ def = def, node = node, total = total, left = total, gui = gui, bar = bar }
+		)
+	end
+
+	local function onButton(action: string, player: Player)
+		if stopped or player ~= ctx.player then
+			return
+		end
+		local now = os.clock()
+		if now - lastPress < BUTTON_COOLDOWN then
+			return
+		end
+		lastPress = now
+		local best: Threat? = nil
+		for _, threat in active do
+			if threat.def.action == action and (not best or threat.left < best.left) then
+				best = threat
+			end
+		end
+		if best then
+			solved += 1
+			security = math.min(100, security + SOLVED_BONUS)
+			burst(nodes[best.node].Position, Color3.fromRGB(80, 220, 120))
+			removeThreat(best)
+		else
+			wrong += 1
+			security = math.max(0, security - WRONG_PENALTY)
+			if hub then
+				burst(hub.Position, Color3.fromRGB(232, 65, 80))
+			end
+		end
+		pushState()
+	end
+
+	for action, prompt in buttons do
+		prompt.Enabled = true
+		table.insert(
+			connections,
+			prompt.Triggered:Connect(function(player: Player)
+				onButton(action, player)
+			end)
+		)
 	end
 	pushState()
 
@@ -249,25 +296,25 @@ function Mission.start(ctx: Types.MissionContext): Types.MissionRun?
 		end
 		spawnTimer -= dt
 		if spawnTimer <= 0 then
-			spawnTimer = SPAWN_INTERVAL[difficulty] or 1.7
-			spawnPacket()
+			spawnTimer = (SPAWN_INTERVAL[difficulty] or SPAWN_INTERVAL[1])
+				* ctx.rng:NextNumber(0.8, 1.2)
+			if #active < (MAX_ACTIVE[difficulty] or 1) then
+				spawnThreat()
+			end
 		end
-		local speed = (SPEED[difficulty] or 6) * dt
-		for _, packet in table.clone(packets) do
-			local step = math.min(speed, packet.remaining)
-			packet.part.Position += packet.direction * step
-			packet.remaining -= step
-			if packet.remaining <= 0.05 then
-				local rack = racks[packet.target]
-				if packet.malicious then
-					leaked += 1
-					rack.hp = math.max(0, rack.hp - (DAMAGE[difficulty] or 18))
-					setBar(rack)
-					burst(packet.part.Position, BAD_COLOR)
-				else
-					delivered += 1
-				end
-				removePacket(packet)
+		for _, threat in table.clone(active) do
+			threat.left -= dt
+			threat.bar.Size = UDim2.fromScale(math.clamp(threat.left / threat.total, 0, 1), 1)
+			-- Луч угрозы мигает, чем меньше времени, тем чаще.
+			local urgency = 1 - math.clamp(threat.left / threat.total, 0, 1)
+			local pulse = math.abs(math.sin(os.clock() * (3 + urgency * 9)))
+			beams[threat.node].Transparency = pulse * 0.6
+			if threat.left <= 0 then
+				missed += 1
+				security = math.max(0, security - MISSED_PENALTY)
+				burst(nodes[threat.node].Position, Color3.fromRGB(232, 65, 80))
+				removeThreat(threat)
+				pushState()
 			end
 		end
 		pushTimer -= dt
@@ -278,16 +325,32 @@ function Mission.start(ctx: Types.MissionContext): Types.MissionRun?
 	end
 
 	run.score = function(): number
-		return math.clamp(averageHealth() - FALSE_BLOCK_PENALTY * falseBlocks, 0, 1)
+		return math.clamp(security / 100, 0, 1)
+	end
+
+	run.isOver = function(): boolean
+		return security <= 0
 	end
 
 	run.stop = function()
 		stopped = true
-		packets = {}
-		folder:Destroy()
-		for _, rack in racks do
-			rack.hp = 100
-			setBar(rack)
+		for _, connection in connections do
+			connection:Disconnect()
+		end
+		for _, prompt in buttons do
+			prompt.Enabled = false
+		end
+		for _, threat in table.clone(active) do
+			removeThreat(threat)
+		end
+		for index = 1, #beams do
+			resetNode(index)
+		end
+		if statusLabel and statusLabel:IsA("TextLabel") then
+			statusLabel.TextColor3 = Fknt.BEAM_COLOR
+			statusLabel.Text = Locale.translate("uk", "mg.fknt.title")
+				.. " / "
+				.. Locale.translate("en", "mg.fknt.title")
 		end
 	end
 

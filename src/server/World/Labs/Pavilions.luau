@@ -19,29 +19,46 @@ export type Rect = { x: number, z: number, hx: number, hz: number }
 
 local SIZE = Vector3.new(36, 15, 28) -- ширина (вдоль стены двери), высота, глубина
 local PATH_WIDTH = 8
+local PATH_TOP = 0.47 -- чуть выше аллеи (0.46)
 
 -- Строит павильоны и возвращает занятые ими области (чтобы деревья и мебель не вставали на них).
 function Pavilions.build(parent: Instance, placed: { Campus.Placed }): { Rect }
 	local rects: { Rect } = {}
 	for _, item in placed do
 		if item.def.id == "c8" then
-			-- Павильон ФКНТ западнее башни, дверь на восток, к аллее корпуса 8.
-			local center = Vector3.new(item.x - 95, 0, item.z)
+			-- Павильон ФКНТ западнее башни, дверь на восток к аллее корпуса 8. Он сдвинут к югу от конца аллеи,
+			-- чтобы дорожка от двери встречала аллею сбоку, а не на её торце.
+			local center = Vector3.new(item.x - 95, 0, item.z + 16)
 			local facing = Vector3.new(1, 0, 0)
 			local origin = CFrame.lookAt(center, center + facing)
 			local faculty = Faculties.byId.fknt
 			LabRoom.build(parent, origin, "fknt", SIZE, faculty.color, Fknt.dress)
-			-- Дорожка от двери до аллеи (аллея в 40 студах от центра павильона).
+			-- Дорожка от двери до оси аллеи: плитка той же высоты, что у аллеи (на 1 см выше, чтобы при
+			-- перекрытии поверхности не мигали), бордюры по краям до самой кромки аллеи.
 			local doorX = center.X + SIZE.Z / 2
 			local alleyX = item.x + item.face.X * (item.hx + 26 + 14)
 			local length = math.max(alleyX - doorX, 4)
 			Build.part(
 				parent,
 				Vector3.new(length, 0.5, PATH_WIDTH),
-				CFrame.new(doorX + length / 2, 0.25, center.Z),
+				CFrame.new(doorX + length / 2, PATH_TOP - 0.25, center.Z),
 				Color3.fromRGB(158, 160, 166),
 				{ name = "LabPath", material = Enum.Material.Pavement }
 			)
+			local curbLength = length - 4
+			for _, side in { -1, 1 } do
+				Build.part(
+					parent,
+					Vector3.new(curbLength, 0.6, 0.6),
+					CFrame.new(
+						doorX + curbLength / 2,
+						PATH_TOP + 0.1 - 0.3,
+						center.Z + side * (PATH_WIDTH / 2 - 0.3)
+					),
+					Color3.fromRGB(206, 208, 212),
+					{ name = "LabPathCurb", canCollide = false }
+				)
+			end
 			table.insert(
 				rects,
 				{ x = center.X, z = center.Z, hx = SIZE.Z / 2 + 6, hz = SIZE.X / 2 + 6 }

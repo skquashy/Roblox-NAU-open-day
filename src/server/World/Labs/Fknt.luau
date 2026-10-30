@@ -1,7 +1,8 @@
 --!strict
--- Обстановка лаборатории ФКНТ для мини-игры «Кіберзахист»: шлюз «Інтернет» у боковой стене и четыре
--- серверные стойки вдоль задней стены. Детали с именами Gateway, Rack1..4, Rack<N>Fill и Rack<N>Lamp
--- использует Missions/fknt: сервер двигает пакеты от шлюза к стойкам и меняет шкалу здоровья.
+-- Обстановка лаборатории ФКНТ для мини-игры «Кіберзахист»: в центре голографическая сеть (хаб и шесть узлов
+-- с лучами), перед ней три большие кнопки (патч, блок IP, перезапуск) и табло статуса, у стен серверные
+-- стойки и шлюз «Інтернет». Детали с именами Hub, Node1..6, Beam1..6, ButtonPatch/Block/Restart и
+-- StatusLabel использует Missions/fknt: сервер ставит угрозы на узлы, красит лучи, читает нажатия кнопок.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -12,8 +13,36 @@ local Build = require(script.Parent.Parent.Build)
 
 local Fknt = {}
 
+Fknt.NODE_COUNT = 6
 Fknt.RACK_COUNT = 4
-Fknt.BAR_WIDTH = 3.6
+Fknt.BEAM_COLOR = Color3.fromRGB(70, 190, 255)
+
+local TABLE_Z = 3 -- центр голограммы относительно середины павильона
+local NODE_RING = 4.6
+local NODE_HEIGHT = 5.6
+local BUTTONS = {
+	{
+		name = "ButtonPatch",
+		key = "mg.fknt.btn.patch",
+		action = "patch",
+		color = Color3.fromRGB(34, 69, 151),
+		x = -6.5,
+	},
+	{
+		name = "ButtonBlock",
+		key = "mg.fknt.btn.block",
+		action = "block",
+		color = Color3.fromRGB(200, 40, 50),
+		x = 0,
+	},
+	{
+		name = "ButtonRestart",
+		key = "mg.fknt.btn.restart",
+		action = "restart",
+		color = Color3.fromRGB(44, 48, 56),
+		x = 6.5,
+	},
+}
 
 local function bilingual(key: string): string
 	return Locale.translate("uk", key) .. " / " .. Locale.translate("en", key)
@@ -33,7 +62,7 @@ function Fknt.dress(model: Model, origin: CFrame, size: Vector3)
 		return Build.part(model, partSize, origin * offset, color, opts)
 	end
 
-	-- Шлюз: светящаяся рама у боковой стены, из неё вылетают пакеты.
+	-- Шлюз «Інтернет» у боковой стене: светящаяся рама (декорация, пакеты больше не летят).
 	local gatewayX = width / 2 - 1.6
 	put(
 		"Gateway",
@@ -71,14 +100,13 @@ function Fknt.dress(model: Model, origin: CFrame, size: Vector3)
 		nil
 	)
 
-	-- Стойки у задней стены лицом к центру комнаты: корпус, ряды серверных блоков, шкала здоровья, лампа.
+	-- Серверные стойки у задней стены (декор, лицом к центру комнаты).
 	local rackZ = depth / 2 - 2.4
-	local pitch = 7
 	for index = 1, Fknt.RACK_COUNT do
-		local x = (index - (Fknt.RACK_COUNT + 1) / 2) * pitch
+		local x = (index - (Fknt.RACK_COUNT + 1) / 2) * 7 * 1.35
 		local front = rackZ - 1.5
 		put(
-			"Rack" .. index,
+			"RackDecor",
 			Vector3.new(4.4, 9, 3),
 			CFrame.new(x, 4.5 + 0.6, rackZ),
 			Color3.fromRGB(40, 44, 52)
@@ -100,46 +128,133 @@ function Fknt.dress(model: Model, origin: CFrame, size: Vector3)
 			)
 		end
 		put(
-			"Rack" .. index .. "Back",
-			Vector3.new(Fknt.BAR_WIDTH + 0.3, 0.5, 0.15),
+			"RackTopGlow",
+			Vector3.new(3.6, 0.3, 0.15),
 			CFrame.new(x, 8.2, front - 0.1),
-			Color3.fromRGB(20, 22, 28),
-			{ canCollide = false }
-		)
-		put(
-			"Rack" .. index .. "Fill",
-			Vector3.new(Fknt.BAR_WIDTH, 0.35, 0.2),
-			CFrame.new(x, 8.2, front - 0.2),
-			Color3.fromRGB(80, 220, 120),
-			{ material = Enum.Material.Neon, canCollide = false }
-		)
-		put(
-			"Rack" .. index .. "Lamp",
-			Vector3.new(0.7, 0.7, 0.3),
-			CFrame.new(x - 1.7, 7.3, front - 0.2),
 			Color3.fromRGB(80, 220, 120),
 			{ material = Enum.Material.Neon, canCollide = false }
 		)
 	end
 
-	-- Мелочи для вида: кабельный лоток вдоль потолка над стойками и стол с монитором.
+	-- Стол-проектор и голографическая сеть: хаб в центре и шесть узлов по кольцу, от хаба к каждому луч.
+	local hub = Vector3.new(0, NODE_HEIGHT, TABLE_Z)
+	Build.cylinder(
+		model,
+		13,
+		3,
+		(origin * CFrame.new(0, 1.5 + 0.6, TABLE_Z)).Position,
+		Color3.fromRGB(30, 34, 44),
+		"Y",
+		{ name = "TableBase" }
+	)
+	local plane = Build.cylinder(
+		model,
+		12,
+		0.15,
+		(origin * CFrame.new(0, 3.7, TABLE_Z)).Position,
+		Fknt.BEAM_COLOR,
+		"Y",
+		{
+			name = "HoloPlane",
+			material = Enum.Material.Neon,
+			transparency = 0.75,
+			canCollide = false,
+		}
+	)
+	Build.glow(plane, Fknt.BEAM_COLOR, 0.8, 24)
 	put(
-		"CableTray",
-		Vector3.new(width - 4, 0.4, 1.2),
-		CFrame.new(0, height - 1.4, rackZ),
-		Color3.fromRGB(110, 116, 126),
+		"Hub",
+		Vector3.new(1.8, 1.8, 1.8),
+		CFrame.new(hub),
+		Fknt.BEAM_COLOR,
+		{ material = Enum.Material.Neon, shape = Enum.PartType.Ball, canCollide = false }
+	)
+	for index = 1, Fknt.NODE_COUNT do
+		local angle = (index - 1) / Fknt.NODE_COUNT * math.pi * 2
+		local node = Vector3.new(
+			math.cos(angle) * NODE_RING,
+			NODE_HEIGHT + math.sin(angle * 2) * 0.6,
+			TABLE_Z + math.sin(angle) * NODE_RING
+		)
+		put(
+			"Node" .. index,
+			Vector3.new(1.4, 1.4, 1.4),
+			CFrame.new(node),
+			Color3.fromRGB(150, 220, 255),
+			{ material = Enum.Material.Neon, shape = Enum.PartType.Ball, canCollide = false }
+		)
+		local middle = (hub + node) / 2
+		put(
+			"Beam" .. index,
+			Vector3.new(0.18, 0.18, (node - hub).Magnitude),
+			CFrame.lookAt(middle, node),
+			Fknt.BEAM_COLOR,
+			{ material = Enum.Material.Neon, canCollide = false }
+		)
+	end
+
+	-- Три кнопки перед голограммой, каждая со своей подсказкой «Взаємодіяти» (включается только в игре).
+	for _, button in BUTTONS do
+		local part = put(
+			button.name,
+			Vector3.new(5, 3.2, 3),
+			CFrame.new(button.x, 1.6 + 0.6, -7),
+			button.color,
+			{ material = Enum.Material.SmoothPlastic }
+		)
+		part:SetAttribute("Action", button.action)
+		Build.text(part, Enum.NormalId.Front, bilingual(button.key), Color3.new(1, 1, 1), nil)
+		put(
+			button.name .. "Glow",
+			Vector3.new(5.4, 0.3, 3.4),
+			CFrame.new(button.x, 0.75, -7),
+			Fknt.BEAM_COLOR,
+			{ material = Enum.Material.Neon, canCollide = false }
+		)
+		local prompt = Instance.new("ProximityPrompt")
+		prompt.Name = "ActionPrompt"
+		prompt.ActionText = bilingual("ui.interact")
+		prompt.ObjectText = bilingual(button.key)
+		prompt.HoldDuration = 0
+		prompt.MaxActivationDistance = 9
+		prompt.RequiresLineOfSight = false
+		prompt.Enabled = false
+		prompt.Parent = part
+	end
+
+	-- Табло статуса над столом.
+	local board = put(
+		"StatusBoard",
+		Vector3.new(16, 2.6, 0.3),
+		CFrame.new(0, height - 4.2, TABLE_Z + 7),
+		Color3.fromRGB(12, 20, 40),
 		{ canCollide = false }
 	)
+	local gui = Instance.new("SurfaceGui")
+	gui.Face = Enum.NormalId.Front
+	gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+	gui.PixelsPerStud = 40
+	gui.Parent = board
+	local label = Instance.new("TextLabel")
+	label.Name = "StatusLabel"
+	label.BackgroundTransparency = 1
+	label.Size = UDim2.fromScale(1, 1)
+	label.TextScaled = true
+	label.TextColor3 = Fknt.BEAM_COLOR
+	label.Text = bilingual("mg.fknt.title")
+	label.Parent = gui
+
+	-- Стол с монитором для вида.
 	put(
 		"Desk",
 		Vector3.new(6, 1.6, 2.4),
-		CFrame.new(-(width / 2 - 5), 1.4, depth / 6),
+		CFrame.new(-(width / 2 - 5), 1.4, depth / 6 + 2),
 		Color3.fromRGB(150, 154, 160)
 	)
 	put(
 		"DeskMonitor",
 		Vector3.new(2.4, 1.6, 0.2),
-		CFrame.new(-(width / 2 - 5), 3.2, depth / 6 + 0.6),
+		CFrame.new(-(width / 2 - 5), 3.2, depth / 6 + 2.6),
 		Color3.fromRGB(34, 69, 151),
 		{ material = Enum.Material.Neon, canCollide = false }
 	)
